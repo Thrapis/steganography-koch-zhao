@@ -206,7 +206,7 @@ namespace TestCW
             this.numericUpDown2.Size = new System.Drawing.Size(94, 22);
             this.numericUpDown2.TabIndex = 16;
             this.numericUpDown2.Value = new decimal(new int[] {
-            150,
+            25,
             0,
             0,
             0});

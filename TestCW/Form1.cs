@@ -20,7 +20,7 @@ namespace TestCW
         
         Bitmap Image;
         int ImageMaxBytes = 0;
-        int Offset = 150;
+        int Offset = 25;
         int SelectedSpecter = 2;
         Point P1 = new Point(3, 4);
         Point P2 = new Point(4, 3);
@@ -36,16 +36,23 @@ namespace TestCW
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
-            double[,] cost, e;
-            (cost, e) = KeysDCT.GenCostAndE();
-            for (int i = 0; i < cost.GetLength(1); i++)
-            {
-                for (int j = 0; j < cost.GetLength(0); j++)
-                {
-                    Console.Write(cost[i, j] + "\t");
-                }
-                Console.WriteLine();
-            }
+            byte[,] arr = { {1, 2, 3, 4, 5, 6, 7, 8},
+                        {9, 10, 11, 12, 13, 14, 15, 16},
+                        {17, 18, 19, 20, 21, 22, 23, 24},
+                        {25, 26, 27, 28, 29, 30, 31, 32},
+                        {33, 34, 35, 36, 37, 38, 39, 40},
+                        {41, 42, 43, 44, 45, 46, 47, 48},
+                        {49, 50, 51, 52, 53, 54, 55, 56},
+                        {157, 158, 159, 160, 161, 162, 163, 164} };
+            double[,] arrd;
+            /*Console.WriteLine("---------------------------");
+            arr.EnterToConsole();
+            Console.WriteLine("---------------------------");
+            arrd = KochZhao.GetDCT(arr);
+            arrd.EnterToConsole();
+            Console.WriteLine("---------------------------");
+            KochZhao.GetIDCT(arrd).EnterToConsole();
+            Console.WriteLine("---------------------------");*/
         }
 
         private void button1_Click(object sender, EventArgs e)
