@@ -227,15 +227,13 @@ namespace TestCW
 		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpectrum, IProgressChanged form = null)
 		{
 			if (form != null)
-				form.ChangeProgress(5);
+				form.ChangeProgress(1);
 
 			Random rand = new Random();
 			BitArray textBits = ToBinaryString(encoding, text);
 			Bitmap img = (Bitmap)toCloneImg.Clone();
 			int l = 0;
-
-			if (form != null)
-				form.ChangeProgress(20 / (textBits.Count + 20) * 100);
+			int MaxEncodedBits = (img.Width / 8) * (img.Height / 8);
 
 			double[,] specter_map = GetSpectrumMap(selectedSpectrum, ref img);
 
@@ -278,10 +276,9 @@ namespace TestCW
 						}
 					}
 
-					if (l < textBits.Count)
-						l++;
+					l++;
 					if (form != null)
-						form.ChangeProgress((int)(((double)l + 20) / (double)(textBits.Count + 20) * 100 / 2));
+						form.ChangeProgress((int)(((double)l / (double)(MaxEncodedBits) * 100)));
 				}
 			}
 
@@ -297,7 +294,7 @@ namespace TestCW
 		public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
 		{
 			if (form != null)
-				form.ChangeProgress(5);
+				form.ChangeProgress(1);
 
 			List<bool> textBits = new List<bool>();
 			int l = 0;

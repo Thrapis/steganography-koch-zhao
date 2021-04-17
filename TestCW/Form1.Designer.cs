@@ -29,27 +29,28 @@ namespace TestCW
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.Image_PictureBox = new System.Windows.Forms.PictureBox();
             this.TextToEncode = new System.Windows.Forms.TextBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.Key_NumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.P1X = new System.Windows.Forms.TrackBar();
             this.P1Y = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
             this.P2X = new System.Windows.Forms.TrackBar();
             this.P2Y = new System.Windows.Forms.TrackBar();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.Offset_NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.logPanel = new System.Windows.Forms.TextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.Spectrum_ComboBox = new System.Windows.Forms.ComboBox();
+            this.AnalysedImage_PictureBox = new System.Windows.Forms.PictureBox();
+            this.LogPanel = new System.Windows.Forms.TextBox();
+            this.Resize_CheckBox = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveEncodedImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDecodedTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,60 +59,76 @@ namespace TestCW
             this.encodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analyseEncodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TextToDecode = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.EncodedImage_PictureBox = new System.Windows.Forms.PictureBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.ProgressBarText = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.Image_PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Key_NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P1X)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P1Y)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P2X)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P2Y)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Offset_NumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysedImage_PictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EncodedImage_PictureBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // Image_PictureBox
             // 
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(449, 51);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(308, 306);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.Image_PictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Image_PictureBox.BackgroundImage")));
+            this.Image_PictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Image_PictureBox.Location = new System.Drawing.Point(371, 63);
+            this.Image_PictureBox.Name = "Image_PictureBox";
+            this.Image_PictureBox.Size = new System.Drawing.Size(308, 408);
+            this.Image_PictureBox.TabIndex = 0;
+            this.Image_PictureBox.TabStop = false;
+            this.Image_PictureBox.Click += new System.EventHandler(this.Image_PictureBox_Click);
             // 
             // TextToEncode
             // 
-            this.TextToEncode.Location = new System.Drawing.Point(449, 374);
+            this.TextToEncode.Location = new System.Drawing.Point(373, 504);
             this.TextToEncode.Multiline = true;
             this.TextToEncode.Name = "TextToEncode";
             this.TextToEncode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TextToEncode.Size = new System.Drawing.Size(361, 203);
+            this.TextToEncode.Size = new System.Drawing.Size(456, 203);
             this.TextToEncode.TabIndex = 2;
+            this.TextToEncode.TextChanged += new System.EventHandler(this.PropertiesChanged);
+            this.TextToEncode.DoubleClick += new System.EventHandler(this.OpenText_MenuItem_Click);
             // 
-            // numericUpDown1
+            // Key_NumericUpDown
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(286, 482);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.Key_NumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Key_NumericUpDown.Location = new System.Drawing.Point(195, 446);
+            this.Key_NumericUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(135, 22);
-            this.numericUpDown1.TabIndex = 5;
+            this.Key_NumericUpDown.Name = "Key_NumericUpDown";
+            this.Key_NumericUpDown.Size = new System.Drawing.Size(135, 26);
+            this.Key_NumericUpDown.TabIndex = 5;
             // 
-            // progressBar1
+            // ProgressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(540, 593);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(773, 35);
-            this.progressBar1.TabIndex = 6;
+            this.ProgressBar.Location = new System.Drawing.Point(10, 723);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(1303, 35);
+            this.ProgressBar.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label1.Location = new System.Drawing.Point(72, 538);
+            this.label1.Location = new System.Drawing.Point(77, 623);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 20);
             this.label1.TabIndex = 12;
@@ -120,7 +137,7 @@ namespace TestCW
             // P1X
             // 
             this.P1X.LargeChange = 1;
-            this.P1X.Location = new System.Drawing.Point(66, 572);
+            this.P1X.Location = new System.Drawing.Point(71, 657);
             this.P1X.Maximum = 7;
             this.P1X.Name = "P1X";
             this.P1X.Size = new System.Drawing.Size(104, 56);
@@ -131,7 +148,7 @@ namespace TestCW
             // P1Y
             // 
             this.P1Y.LargeChange = 1;
-            this.P1Y.Location = new System.Drawing.Point(10, 524);
+            this.P1Y.Location = new System.Drawing.Point(10, 609);
             this.P1Y.Maximum = 7;
             this.P1Y.Name = "P1Y";
             this.P1Y.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -144,7 +161,7 @@ namespace TestCW
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label2.Location = new System.Drawing.Point(263, 538);
+            this.label2.Location = new System.Drawing.Point(269, 623);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 20);
             this.label2.TabIndex = 15;
@@ -153,7 +170,7 @@ namespace TestCW
             // P2X
             // 
             this.P2X.LargeChange = 1;
-            this.P2X.Location = new System.Drawing.Point(257, 572);
+            this.P2X.Location = new System.Drawing.Point(263, 657);
             this.P2X.Maximum = 7;
             this.P2X.Name = "P2X";
             this.P2X.Size = new System.Drawing.Size(104, 56);
@@ -164,7 +181,7 @@ namespace TestCW
             // P2Y
             // 
             this.P2Y.LargeChange = 1;
-            this.P2Y.Location = new System.Drawing.Point(201, 524);
+            this.P2Y.Location = new System.Drawing.Point(201, 609);
             this.P2Y.Maximum = 7;
             this.P2Y.Name = "P2Y";
             this.P2Y.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -173,90 +190,99 @@ namespace TestCW
             this.P2Y.Value = 4;
             this.P2Y.Scroll += new System.EventHandler(this.PropertiesChanged);
             // 
-            // numericUpDown2
+            // Offset_NumericUpDown
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(11, 481);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.Offset_NumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Offset_NumericUpDown.Location = new System.Drawing.Point(10, 507);
+            this.Offset_NumericUpDown.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(94, 22);
-            this.numericUpDown2.TabIndex = 16;
-            this.numericUpDown2.Value = new decimal(new int[] {
+            this.Offset_NumericUpDown.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.Offset_NumericUpDown.Name = "Offset_NumericUpDown";
+            this.Offset_NumericUpDown.Size = new System.Drawing.Size(176, 26);
+            this.Offset_NumericUpDown.TabIndex = 16;
+            this.Offset_NumericUpDown.Value = new decimal(new int[] {
             25,
             0,
             0,
             0});
-            this.numericUpDown2.ValueChanged += new System.EventHandler(this.PropertiesChanged);
+            this.Offset_NumericUpDown.ValueChanged += new System.EventHandler(this.PropertiesChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label3.Location = new System.Drawing.Point(282, 458);
+            this.label3.Location = new System.Drawing.Point(191, 423);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(146, 20);
+            this.label3.Size = new System.Drawing.Size(94, 20);
             this.label3.TabIndex = 17;
-            this.label3.Text = "Key (byte number)";
+            this.label3.Text = "Key (bytes)";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label4.Location = new System.Drawing.Point(19, 458);
+            this.label4.Location = new System.Drawing.Point(6, 484);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 20);
             this.label4.TabIndex = 18;
             this.label4.Text = "Offset";
             // 
-            // comboBox1
+            // Spectrum_ComboBox
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(131, 481);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 19;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.PropertiesChanged);
+            this.Spectrum_ComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Spectrum_ComboBox.FormattingEnabled = true;
+            this.Spectrum_ComboBox.Location = new System.Drawing.Point(209, 507);
+            this.Spectrum_ComboBox.Name = "Spectrum_ComboBox";
+            this.Spectrum_ComboBox.Size = new System.Drawing.Size(121, 28);
+            this.Spectrum_ComboBox.TabIndex = 19;
+            this.Spectrum_ComboBox.SelectedIndexChanged += new System.EventHandler(this.PropertiesChanged);
             // 
-            // pictureBox2
+            // AnalysedImage_PictureBox
             // 
-            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(964, 32);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(3, 3, 3, 30);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(308, 306);
-            this.pictureBox2.TabIndex = 20;
-            this.pictureBox2.TabStop = false;
+            this.AnalysedImage_PictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AnalysedImage_PictureBox.Location = new System.Drawing.Point(1005, 63);
+            this.AnalysedImage_PictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 3, 30);
+            this.AnalysedImage_PictureBox.Name = "AnalysedImage_PictureBox";
+            this.AnalysedImage_PictureBox.Size = new System.Drawing.Size(308, 408);
+            this.AnalysedImage_PictureBox.TabIndex = 20;
+            this.AnalysedImage_PictureBox.TabStop = false;
             // 
-            // logPanel
+            // LogPanel
             // 
-            this.logPanel.Location = new System.Drawing.Point(12, 79);
-            this.logPanel.Multiline = true;
-            this.logPanel.Name = "logPanel";
-            this.logPanel.ReadOnly = true;
-            this.logPanel.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logPanel.Size = new System.Drawing.Size(274, 306);
-            this.logPanel.TabIndex = 22;
+            this.LogPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.LogPanel.Location = new System.Drawing.Point(10, 63);
+            this.LogPanel.Multiline = true;
+            this.LogPanel.Name = "LogPanel";
+            this.LogPanel.ReadOnly = true;
+            this.LogPanel.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.LogPanel.Size = new System.Drawing.Size(320, 347);
+            this.LogPanel.TabIndex = 22;
             // 
-            // checkBox1
+            // Resize_CheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(190, 407);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(159, 21);
-            this.checkBox1.TabIndex = 23;
-            this.checkBox1.Text = "Resize For Message";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.Resize_CheckBox.AutoSize = true;
+            this.Resize_CheckBox.Checked = true;
+            this.Resize_CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Resize_CheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Resize_CheckBox.Location = new System.Drawing.Point(10, 447);
+            this.Resize_CheckBox.Name = "Resize_CheckBox";
+            this.Resize_CheckBox.Size = new System.Drawing.Size(150, 24);
+            this.Resize_CheckBox.TabIndex = 23;
+            this.Resize_CheckBox.Text = "Resize For Text";
+            this.Resize_CheckBox.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label5.Location = new System.Drawing.Point(141, 458);
+            this.label5.Location = new System.Drawing.Point(205, 484);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(81, 20);
             this.label5.TabIndex = 24;
@@ -267,17 +293,18 @@ namespace TestCW
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.actionsToolStripMenuItem});
+            this.actionsToolStripMenuItem,
+            this.clearToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1325, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1325, 30);
             this.menuStrip1.TabIndex = 25;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
+            this.openImageToolStripMenuItem,
             this.openTextToolStripMenuItem,
             this.saveEncodedImageToolStripMenuItem,
             this.saveDecodedTextToolStripMenuItem,
@@ -286,12 +313,12 @@ namespace TestCW
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // openToolStripMenuItem
+            // openImageToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(232, 26);
-            this.openToolStripMenuItem.Text = "Open image";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenImage_MenuItem_Click);
+            this.openImageToolStripMenuItem.Name = "openImageToolStripMenuItem";
+            this.openImageToolStripMenuItem.Size = new System.Drawing.Size(232, 26);
+            this.openImageToolStripMenuItem.Text = "Open image";
+            this.openImageToolStripMenuItem.Click += new System.EventHandler(this.OpenImage_MenuItem_Click);
             // 
             // openTextToolStripMenuItem
             // 
@@ -334,61 +361,180 @@ namespace TestCW
             // encodeToolStripMenuItem
             // 
             this.encodeToolStripMenuItem.Name = "encodeToolStripMenuItem";
-            this.encodeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.encodeToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
             this.encodeToolStripMenuItem.Text = "Encoding";
             this.encodeToolStripMenuItem.Click += new System.EventHandler(this.Encoding_MenuItem_Click);
             // 
             // decodeToolStripMenuItem
             // 
             this.decodeToolStripMenuItem.Name = "decodeToolStripMenuItem";
-            this.decodeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.decodeToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
             this.decodeToolStripMenuItem.Text = "Decoding";
             this.decodeToolStripMenuItem.Click += new System.EventHandler(this.Decoding_MenuItem_Click);
             // 
             // analyseEncodingToolStripMenuItem
             // 
             this.analyseEncodingToolStripMenuItem.Name = "analyseEncodingToolStripMenuItem";
-            this.analyseEncodingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.analyseEncodingToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
             this.analyseEncodingToolStripMenuItem.Text = "Analyse encoding";
             this.analyseEncodingToolStripMenuItem.Click += new System.EventHandler(this.AnalyseEncoding_MenuItem_Click);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
+            this.clearToolStripMenuItem.Text = "Clear";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.Clear_MenuItem_Click);
+            // 
+            // TextToDecode
+            // 
+            this.TextToDecode.Location = new System.Drawing.Point(855, 504);
+            this.TextToDecode.Multiline = true;
+            this.TextToDecode.Name = "TextToDecode";
+            this.TextToDecode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TextToDecode.Size = new System.Drawing.Size(458, 203);
+            this.TextToDecode.TabIndex = 26;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label6.Location = new System.Drawing.Point(6, 573);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(224, 20);
+            this.label6.TabIndex = 27;
+            this.label6.Text = "DCT positions that store bits";
+            // 
+            // EncodedImage_PictureBox
+            // 
+            this.EncodedImage_PictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.EncodedImage_PictureBox.Location = new System.Drawing.Point(685, 63);
+            this.EncodedImage_PictureBox.Name = "EncodedImage_PictureBox";
+            this.EncodedImage_PictureBox.Size = new System.Drawing.Size(308, 408);
+            this.EncodedImage_PictureBox.TabIndex = 28;
+            this.EncodedImage_PictureBox.TabStop = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label7.Location = new System.Drawing.Point(366, 32);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(241, 25);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Image To Encode/Decode";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label8.Location = new System.Drawing.Point(680, 32);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(149, 25);
+            this.label8.TabIndex = 30;
+            this.label8.Text = "Encoded Image";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label9.Location = new System.Drawing.Point(1000, 35);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(153, 25);
+            this.label9.TabIndex = 31;
+            this.label9.Text = "Analysed Image";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label10.Location = new System.Drawing.Point(12, 32);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(73, 25);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "Logger";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label11.Location = new System.Drawing.Point(369, 481);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(119, 20);
+            this.label11.TabIndex = 33;
+            this.label11.Text = "Text to encode";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label12.Location = new System.Drawing.Point(851, 481);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(108, 20);
+            this.label12.TabIndex = 34;
+            this.label12.Text = "Decoded text";
+            // 
+            // ProgressBarText
+            // 
+            this.ProgressBarText.AutoSize = true;
+            this.ProgressBarText.BackColor = System.Drawing.Color.Transparent;
+            this.ProgressBarText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ProgressBarText.Location = new System.Drawing.Point(604, 727);
+            this.ProgressBarText.Name = "ProgressBarText";
+            this.ProgressBarText.Size = new System.Drawing.Size(0, 25);
+            this.ProgressBarText.TabIndex = 35;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1325, 640);
+            this.ClientSize = new System.Drawing.Size(1325, 770);
+            this.Controls.Add(this.ProgressBarText);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.EncodedImage_PictureBox);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.TextToDecode);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.logPanel);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.Resize_CheckBox);
+            this.Controls.Add(this.LogPanel);
+            this.Controls.Add(this.AnalysedImage_PictureBox);
+            this.Controls.Add(this.Spectrum_ComboBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.numericUpDown2);
+            this.Controls.Add(this.Offset_NumericUpDown);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.P2X);
             this.Controls.Add(this.P2Y);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.P1X);
             this.Controls.Add(this.P1Y);
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.ProgressBar);
+            this.Controls.Add(this.Key_NumericUpDown);
             this.Controls.Add(this.TextToEncode);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.Image_PictureBox);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Koch&Zhao";
+            ((System.ComponentModel.ISupportInitialize)(this.Image_PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Key_NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.P1X)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.P1Y)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.P2X)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.P2Y)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Offset_NumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysedImage_PictureBox)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EncodedImage_PictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -396,27 +542,27 @@ namespace TestCW
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox Image_PictureBox;
         private System.Windows.Forms.TextBox TextToEncode;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.NumericUpDown Key_NumericUpDown;
+        private System.Windows.Forms.ProgressBar ProgressBar;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar P1X;
         private System.Windows.Forms.TrackBar P1Y;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TrackBar P2X;
         private System.Windows.Forms.TrackBar P2Y;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown Offset_NumericUpDown;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.TextBox logPanel;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.ComboBox Spectrum_ComboBox;
+        private System.Windows.Forms.PictureBox AnalysedImage_PictureBox;
+        private System.Windows.Forms.TextBox LogPanel;
+        private System.Windows.Forms.CheckBox Resize_CheckBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openTextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveEncodedImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveDecodedTextToolStripMenuItem;
@@ -425,6 +571,17 @@ namespace TestCW
         private System.Windows.Forms.ToolStripMenuItem encodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analyseEncodingToolStripMenuItem;
+        private System.Windows.Forms.TextBox TextToDecode;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.PictureBox EncodedImage_PictureBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.Label ProgressBarText;
     }
 }
 
