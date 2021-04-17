@@ -101,6 +101,7 @@
     <Content Include="icon.ico" />
     <Content Include="Images\add_img.png" />
     <Content Include="Images\icon.ico" />
+    <Content Include="Images\icon128.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

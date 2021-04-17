@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCW", "TestCW\TestCW.csproj", "{BBDA5D04-4595-40EB-BA35-B90150A6F662}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupKochAndZhao", "SetupKochAndZhao\SetupKochAndZhao.vdproj", "{D88C8020-59DC-496A-8229-B3F69F826916}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{BBDA5D04-4595-40EB-BA35-B90150A6F662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBDA5D04-4595-40EB-BA35-B90150A6F662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBDA5D04-4595-40EB-BA35-B90150A6F662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D88C8020-59DC-496A-8229-B3F69F826916}.Debug|Any CPU.ActiveCfg = Debug
+		{D88C8020-59DC-496A-8229-B3F69F826916}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
