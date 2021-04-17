@@ -12,14 +12,14 @@ namespace TestCW
 	{
 		private const int RGBSum = 255 + 255 + 255;
 		private static int Offset = 25;
-		private static int SelectedSpecter = 2;
+		private static int SelectedSpectrum = 2;
 		private static Point P1 = new Point(3, 4);
 		private static Point P2 = new Point(4, 3);
 
 		public static void SetSettings(int offset, int specter, Point p1, Point p2)
 		{
 			Offset = offset;
-			SelectedSpecter = specter;
+			SelectedSpectrum = specter;
 			if (p1.X >= 0 && p1.X <= 7 && p1.Y >= 0 && p1.Y <= 7)
 				P1 = p1;
 			if (p2.X >= 0 && p2.X <= 7 && p2.Y >= 0 && p2.Y <= 7)
@@ -28,7 +28,7 @@ namespace TestCW
 
 		public static (int, int, Point, Point) GetSettings() /// offest, specter, p1, p2
 		{
-			return (Offset, SelectedSpecter, P1, P2);
+			return (Offset, SelectedSpectrum, P1, P2);
 		}
 
 		private static BitArray ToBinaryString(Encoding encoding, string text)
@@ -174,77 +174,7 @@ namespace TestCW
 			return buf_dct;
 		}
 
-		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpecter, IProgressChanged form = null, bool pixelCorrection = false)
-        {
-            if (form != null)
-                form.ChangeProgress(5);
-
-            Random rand = new Random();
-            BitArray textBits = ToBinaryString(encoding, text);
-            Bitmap img = (Bitmap)toCloneImg.Clone();
-            int l = 0;
-
-            if (form != null)
-                form.ChangeProgress(20 / (textBits.Count + 20) * 100);
-
-            double[,] specter_map = GetSpecterMap(selectedSpecter, ref img);
-
-            double[,] temp_bm = new double[8, 8];
-            for (int i = 0; i + 7 < img.Height; i += 8)
-            {
-                for (int j = 0; j + 7 < img.Width; j += 8)
-                {
-                    for (int y = 0; y < 8; y++)
-                    {
-                        for (int x = 0; x < 8; x++)
-                        {
-                            Color cl = img.GetPixel(x + j, y + i);
-                            if (selectedSpecter == 0)
-                                temp_bm[x, y] = cl.R;
-                            else if (selectedSpecter == 1)
-                                temp_bm[x, y] = cl.G;
-                            else if (selectedSpecter == 2)
-                                temp_bm[x, y] = cl.B;
-                        }
-                    }
-
-                    double[,] dct = GetDCT(temp_bm);
-
-                    bool bit;
-                    if (l < textBits.Count)
-                        bit = textBits[l];
-                    else
-                        bit = rand.Next(0, 2) == 1 ? true : false;
-
-                    dct = SetBitToSqrOctoplet(dct, bit);
-
-                    temp_bm = GetIDCT(dct);
-
-                    for (int y = 0; y < 8; y++)
-                    {
-                        for (int x = 0; x < 8; x++)
-                        {
-                            specter_map[x + j, y + i] = temp_bm[x, y];
-                        }
-                    }
-
-                    if (l < textBits.Count)
-                        l++;
-                    if (form != null)
-                        form.ChangeProgress((int)(((double)l + 20) / (double)(textBits.Count + 20) * 100 / 2));
-                }
-            }
-
-            byte[,] normalized_specter_map = Normalization(specter_map);
-
-            SetSpecterMapOfImage(selectedSpecter, ref img, normalized_specter_map);
-
-            if (form != null)
-                form.ChangeProgress(100);
-            return img;
-        }
-
-        private static void SetSpecterMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
+        private static void SetSpectrumMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
         {
             for (int i = 0; i + 7 < img.Height; i += 8)
             {
@@ -269,7 +199,7 @@ namespace TestCW
             }
         }
 
-        private static double[,] GetSpecterMap(int selectedSpecter, ref Bitmap img)
+        private static double[,] GetSpectrumMap(int selectedSpecter, ref Bitmap img)
         {
             double[,] specter_map = new double[img.Width, img.Height];
             for (int i = 0; i + 7 < img.Height; i += 8)
@@ -294,7 +224,77 @@ namespace TestCW
             return specter_map;
         }
 
-        public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
+		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpectrum, IProgressChanged form = null)
+		{
+			if (form != null)
+				form.ChangeProgress(5);
+
+			Random rand = new Random();
+			BitArray textBits = ToBinaryString(encoding, text);
+			Bitmap img = (Bitmap)toCloneImg.Clone();
+			int l = 0;
+
+			if (form != null)
+				form.ChangeProgress(20 / (textBits.Count + 20) * 100);
+
+			double[,] specter_map = GetSpectrumMap(selectedSpectrum, ref img);
+
+			double[,] temp_bm = new double[8, 8];
+			for (int i = 0; i + 7 < img.Height; i += 8)
+			{
+				for (int j = 0; j + 7 < img.Width; j += 8)
+				{
+					for (int y = 0; y < 8; y++)
+					{
+						for (int x = 0; x < 8; x++)
+						{
+							Color cl = img.GetPixel(x + j, y + i);
+							if (selectedSpectrum == 0)
+								temp_bm[x, y] = cl.R;
+							else if (selectedSpectrum == 1)
+								temp_bm[x, y] = cl.G;
+							else if (selectedSpectrum == 2)
+								temp_bm[x, y] = cl.B;
+						}
+					}
+
+					double[,] dct = GetDCT(temp_bm);
+
+					bool bit;
+					if (l < textBits.Count)
+						bit = textBits[l];
+					else
+						bit = rand.Next(0, 2) == 1 ? true : false;
+
+					dct = SetBitToSqrOctoplet(dct, bit);
+
+					temp_bm = GetIDCT(dct);
+
+					for (int y = 0; y < 8; y++)
+					{
+						for (int x = 0; x < 8; x++)
+						{
+							specter_map[x + j, y + i] = temp_bm[x, y];
+						}
+					}
+
+					if (l < textBits.Count)
+						l++;
+					if (form != null)
+						form.ChangeProgress((int)(((double)l + 20) / (double)(textBits.Count + 20) * 100 / 2));
+				}
+			}
+
+			byte[,] normalized_specter_map = Normalization(specter_map);
+
+			SetSpectrumMapOfImage(selectedSpectrum, ref img, normalized_specter_map);
+
+			if (form != null)
+				form.ChangeProgress(100);
+			return img;
+		}
+
+		public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
 		{
 			if (form != null)
 				form.ChangeProgress(5);
@@ -319,11 +319,11 @@ namespace TestCW
 						for (int x = 0; x < 8; x++)
 						{
 							Color cl = img.GetPixel(x + j, y + i);
-							if (SelectedSpecter == 0)
+							if (SelectedSpectrum == 0)
 								temp_bm[x, y] = cl.R;
-							else if (SelectedSpecter == 1)
+							else if (SelectedSpectrum == 1)
 								temp_bm[x, y] = cl.G;
-							else if (SelectedSpecter == 2)
+							else if (SelectedSpectrum == 2)
 								temp_bm[x, y] = cl.B;
 						}
 					}
