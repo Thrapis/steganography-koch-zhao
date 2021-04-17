@@ -73,5 +73,18 @@ namespace TestCW
 
             return result;
         }
+
+        public static double[,] Copy(this double[,] arr)
+        {
+            double[,] result = new double[arr.GetLength(0), arr.GetLength(1)];
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                for (int j = 0; j < arr.GetLength(1); j++)
+                {
+                    result[i, j] = arr[i, j];
+                }
+            }
+            return result;
+        }
     }
 }

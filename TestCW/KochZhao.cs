@@ -11,7 +11,7 @@ namespace TestCW
 	public static class KochZhao
 	{
 		private const int RGBSum = 255 + 255 + 255;
-		private static int Offset = 150;
+		private static int Offset = 25;
 		private static int SelectedSpecter = 2;
 		private static Point P1 = new Point(3, 4);
 		private static Point P2 = new Point(4, 3);
@@ -50,7 +50,7 @@ namespace TestCW
 			return encoding.GetString(bitArray.BitArrayToByteArray());
 		}
 
-		public static double[,] GetDCT(byte[,] temp_bm)
+		public static double[,] GetDCT(double[,] temp_bm)
 		{
 			double[,] dct = new double[8, 8];
 
@@ -73,9 +73,9 @@ namespace TestCW
 			return dct;
 		}
 
-		public static byte[,] GetIDCT(double[,] dct)
+		public static double[,] GetIDCT(double[,] dct)
 		{
-			byte[,] arr = new byte[8, 8];
+			double[,] arr = new double[8, 8];
 
 			for (int i = 0; i < 8; i++)
 			{
@@ -88,8 +88,8 @@ namespace TestCW
 						for (int y = 0; y < 8; y++)
 						{
 							temp += dct[x, y] * KeysDCT.cos_t[x, i] * KeysDCT.cos_t[y, j] * KeysDCT.e[x, y];
-							byte spect = temp > 255 ? (byte)255 : (byte)Math.Round(temp);
-							arr[i, j] = spect;
+							//byte spect = temp > 255 ? (byte)255 : (byte)Math.Round(temp);
+							arr[i, j] = temp;
 						}
 					}
 				}
@@ -97,156 +97,204 @@ namespace TestCW
 			return arr;
 		}
 
-		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpecter, IProgressChanged form = null, bool pixelCorrection = false)
+		private static byte[,] Normalization(double[,] idct)
 		{
-			if (form != null)
-				form.ChangeProgress(5);
-
-			BitArray textBits = ToBinaryString(encoding, text);
-			Bitmap img = (Bitmap)toCloneImg.Clone();
-			int l = 0;
-			double k = 0;
-
-			if (form != null)
-				form.ChangeProgress(20 / (textBits.Count + 20) * 100);
-
-			byte[,] temp_bm = new byte[8, 8];
-			for (int i = 0; i + 7 < img.Height; i += 8)
+			double min = Double.MaxValue, max = Double.MinValue;
+			for (int i = 0; i < idct.GetLength(0); i++)
 			{
-				for (int j = 0; j + 7 < img.Width; j += 8)
+				for (int j = 0; j < idct.GetLength(1); j++)
 				{
-					if (l >= textBits.Count)
-						break;
-
-					for (int y = 0; y < 8; y++)
-					{
-						for (int x = 0; x < 8; x++)
-						{
-							Color cl = img.GetPixel(x + j, y + i);
-							if (selectedSpecter == 0)
-								temp_bm[x, y] = cl.R;
-							else if (selectedSpecter == 1)
-								temp_bm[x, y] = cl.G;
-							else if (selectedSpecter == 2)
-								temp_bm[x, y] = cl.B;
-						}
-					}
-
-					double[,] dct = GetDCT(temp_bm);
-
-					if (l == 5294)
-					{
-						Console.WriteLine();
-					}
-
-					double P1b = Math.Abs(dct[P1.Y, P1.X]);
-					double P2b = Math.Abs(dct[P2.Y, P2.X]);
-
-					bool good_idct = false;
-
-					while (!good_idct)
-                    {
-						bool encr_bit = false;
-
-						while (!encr_bit)
-						{
-							k = Math.Abs(dct[P1.Y, P1.X]) - Math.Abs(dct[P2.Y, P2.X]);
-							if (textBits[l]) // K1 - K2 > Offset    ->   1
-							{
-								if (k <= Offset)
-								{
-									//dct[P1.Y, P1.X] = dct[P1.Y, P1.X] >= 0 ? Math.Abs(dct[P2.Y, P2.X]) + Offset :
-									//	-1 * (Math.Abs(dct[P2.Y, P2.X]) + Offset);
-									dct[P1.Y, P1.X] += dct[P1.Y, P1.X] >= 0 ? 1 : -1;
-									dct[P2.Y, P2.X] += dct[P2.Y, P2.X] >= 0 ? -1 : 1;
-								}
-								else
-								{
-									encr_bit = true;
-								}
-							}
-							else            // K1 - K2 < -Offset     ->   0
-							{
-								if (k >= -Offset)
-								{
-									//dct[P2.Y, P2.X] = dct[P2.Y, P2.X] >= 0 ? Math.Abs(dct[P1.Y, P1.X]) + Offset :
-									//	-1 * (Math.Abs(dct[P1.Y, P1.X]) + Offset);
-									dct[P1.Y, P1.X] += dct[P1.Y, P1.X] >= 0 ? -1 : 1;
-									dct[P2.Y, P2.X] += dct[P2.Y, P2.X] >= 0 ? 1 : -1;
-								}
-								else
-								{
-									encr_bit = true;
-								}
-							}
-						}
-
-						double[,] buf_dct = GetDCT(GetIDCT(dct));
-						k = Math.Abs(buf_dct[P1.Y, P1.X]) - Math.Abs(buf_dct[P2.Y, P2.X]);
-						if (textBits[l]) // K1 - K2 > Offset    ->   1
-						{
-							if (k >= 0)
-								good_idct = true;
-							else
-								dct = buf_dct;
-						}
-						else            // K1 - K2 < -Offset     ->   0
-						{
-							if (k < 0)
-								good_idct = true;
-							else
-								dct = buf_dct;
-						}
-					}
-
-					
-
-					P1b = Math.Abs(dct[P1.Y, P1.X]);
-					P2b = Math.Abs(dct[P2.Y, P2.X]);
-					k = Math.Abs(dct[P1.Y, P1.X]) - Math.Abs(dct[P2.Y, P2.X]);
-
-					temp_bm = GetIDCT(dct);
-
-					if (l == 5294)
-					{
-						Console.WriteLine("Modif dct");
-						dct.EnterToConsole();
-						Console.WriteLine("Modif idct");
-						temp_bm.EnterToConsole();
-					}
-
-
-					for (int y = 0; y < 8; y++)
-					{
-						for (int x = 0; x < 8; x++)
-						{
-							Color old = img.GetPixel(x + j, y + i);
-							Color cl = new Color();
-							if (selectedSpecter == 0)
-								cl = Color.FromArgb(temp_bm[x, y], old.G, old.B);
-							else if (selectedSpecter == 1)
-								cl = Color.FromArgb(old.R, temp_bm[x, y], old.B);
-							else if (selectedSpecter == 2)
-								cl = Color.FromArgb(old.R, old.G, temp_bm[x, y]);
-							img.SetPixel(x + j, y + i, cl);
-						}
-					}
-
-					l++;
-					if (form != null)
-						form.ChangeProgress((int)(((double)l + 20) / (double)(textBits.Count + 20) * 100));
+					if (idct[i, j] > max)
+						max = idct[i, j];
+					if (idct[i, j] < min)
+						min = idct[i, j];
 				}
-
-				if (l >= textBits.Count)
-					break;
 			}
-
-			if (form != null)
-				form.ChangeProgress(100);
-			return img;
+			byte[,] result = new byte[idct.GetLength(0), idct.GetLength(1)];
+			for (int i = 0; i < idct.GetLength(0); i++)
+			{
+				for (int j = 0; j < idct.GetLength(1); j++)
+				{
+					result[i, j] = (byte)(255 * (idct[i, j] + Math.Abs(min)) / (max + Math.Abs(min)));
+				}
+			}
+			return result;
 		}
 
-		public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
+		private static double[,] SetBitToSqrOctoplet(double[,] dct, bool bit)
+		{
+			double k;
+			double[,] buf_dct = dct.Copy();
+
+			bool good_idct = false;
+			while (!good_idct)
+			{
+				bool encr_bit = false;
+				while (!encr_bit)
+				{
+					k = Math.Abs(buf_dct[P1.Y, P1.X]) - Math.Abs(buf_dct[P2.Y, P2.X]);
+					if (bit) // K1 - K2 > Offset    ->   1
+					{
+						if (k <= Offset)
+						{
+							buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? 1 : -1;
+							buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? -1 : 1;
+						}
+						else
+							encr_bit = true;
+					}
+					else            // K1 - K2 < -Offset     ->   0
+					{
+						if (k >= -Offset)
+						{
+							buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? -1 : 1;
+							buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? 1 : -1;
+						}
+						else
+							encr_bit = true;
+					}
+				}
+				double[,] decr_dct = GetDCT(GetIDCT(buf_dct));
+				k = Math.Abs(decr_dct[P1.Y, P1.X]) - Math.Abs(decr_dct[P2.Y, P2.X]);
+				if (bit) // K1 - K2 > Offset    ->   1
+				{
+					if (k >= 0)
+						good_idct = true;
+					else
+						buf_dct = decr_dct;
+				}
+				else            // K1 - K2 < -Offset     ->   0
+				{
+					if (k < 0)
+						good_idct = true;
+					else
+						buf_dct = decr_dct;
+				}
+			}
+			return buf_dct;
+		}
+
+		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpecter, IProgressChanged form = null, bool pixelCorrection = false)
+        {
+            if (form != null)
+                form.ChangeProgress(5);
+
+            Random rand = new Random();
+            BitArray textBits = ToBinaryString(encoding, text);
+            Bitmap img = (Bitmap)toCloneImg.Clone();
+            int l = 0;
+
+            if (form != null)
+                form.ChangeProgress(20 / (textBits.Count + 20) * 100);
+
+            double[,] specter_map = GetSpecterMap(selectedSpecter, ref img);
+
+            double[,] temp_bm = new double[8, 8];
+            for (int i = 0; i + 7 < img.Height; i += 8)
+            {
+                for (int j = 0; j + 7 < img.Width; j += 8)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            Color cl = img.GetPixel(x + j, y + i);
+                            if (selectedSpecter == 0)
+                                temp_bm[x, y] = cl.R;
+                            else if (selectedSpecter == 1)
+                                temp_bm[x, y] = cl.G;
+                            else if (selectedSpecter == 2)
+                                temp_bm[x, y] = cl.B;
+                        }
+                    }
+
+                    double[,] dct = GetDCT(temp_bm);
+
+                    bool bit;
+                    if (l < textBits.Count)
+                        bit = textBits[l];
+                    else
+                        bit = rand.Next(0, 2) == 1 ? true : false;
+
+                    dct = SetBitToSqrOctoplet(dct, bit);
+
+                    temp_bm = GetIDCT(dct);
+
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            specter_map[x + j, y + i] = temp_bm[x, y];
+                        }
+                    }
+
+                    if (l < textBits.Count)
+                        l++;
+                    if (form != null)
+                        form.ChangeProgress((int)(((double)l + 20) / (double)(textBits.Count + 20) * 100 / 2));
+                }
+            }
+
+            byte[,] normalized_specter_map = Normalization(specter_map);
+
+            SetSpecterMapOfImage(selectedSpecter, ref img, normalized_specter_map);
+
+            if (form != null)
+                form.ChangeProgress(100);
+            return img;
+        }
+
+        private static void SetSpecterMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
+        {
+            for (int i = 0; i + 7 < img.Height; i += 8)
+            {
+                for (int j = 0; j + 7 < img.Width; j += 8)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            Color old = img.GetPixel(x + j, y + i);
+                            Color cl = new Color();
+                            if (selectedSpecter == 0)
+                                cl = Color.FromArgb(normalized_specter_map[x + j, y + i], old.G, old.B);
+                            else if (selectedSpecter == 1)
+                                cl = Color.FromArgb(old.R, normalized_specter_map[x + j, y + i], old.B);
+                            else if (selectedSpecter == 2)
+                                cl = Color.FromArgb(old.R, old.G, normalized_specter_map[x + j, y + i]);
+                            img.SetPixel(x + j, y + i, cl);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static double[,] GetSpecterMap(int selectedSpecter, ref Bitmap img)
+        {
+            double[,] specter_map = new double[img.Width, img.Height];
+            for (int i = 0; i + 7 < img.Height; i += 8)
+            {
+                for (int j = 0; j + 7 < img.Width; j += 8)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            Color cl = img.GetPixel(x + j, y + i);
+                            if (selectedSpecter == 0)
+                                specter_map[x + j, y + i] = cl.R;
+                            else if (selectedSpecter == 1)
+                                specter_map[x + j, y + i] = cl.G;
+                            else if (selectedSpecter == 2)
+                                specter_map[x + j, y + i] = cl.B;
+                        }
+                    }
+                }
+            }
+            return specter_map;
+        }
+
+        public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
 		{
 			if (form != null)
 				form.ChangeProgress(5);
@@ -258,7 +306,7 @@ namespace TestCW
 			if (form != null)
 				form.ChangeProgress(20 / (bitCount + 20) * 100);
 
-			byte[,] temp_bm = new byte[8, 8];
+			double[,] temp_bm = new double[8, 8];
 			for (int i = 0; i + 7 < img.Height; i += 8)
 			{
 				for (int j = 0; j + 7 < img.Width; j += 8)
@@ -281,20 +329,6 @@ namespace TestCW
 					}
 
 					double[,] dct = GetDCT(temp_bm);
-
-					if (l == 5294)
-					{
-						Console.WriteLine("Modif idct");
-						temp_bm.EnterToConsole();
-						Console.WriteLine("Modif dct");
-						dct.EnterToConsole();
-						Console.WriteLine("BackModif idct");
-						GetIDCT(dct).EnterToConsole();
-					}
-
-					double P1b = Math.Abs(dct[P1.Y, P1.X]);
-					double P2b = Math.Abs(dct[P2.Y, P2.X]);
-					double k = P1b - P2b;
 
 					if (Math.Abs(dct[P1.Y, P1.X]) > Math.Abs(dct[P2.Y, P2.X]))
 					{

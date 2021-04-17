@@ -17,7 +17,6 @@ namespace TestCW
 {
     public partial class Form1 : Form, IProgressChanged
     {
-        
         Bitmap Image;
         int ImageMaxBytes = 0;
         int Offset = 25;
@@ -35,24 +34,6 @@ namespace TestCW
 
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-
-            byte[,] arr = { {1, 2, 3, 4, 5, 6, 7, 8},
-                        {9, 10, 11, 12, 13, 14, 15, 16},
-                        {17, 18, 19, 20, 21, 22, 23, 24},
-                        {25, 26, 27, 28, 29, 30, 31, 32},
-                        {33, 34, 35, 36, 37, 38, 39, 40},
-                        {41, 42, 43, 44, 45, 46, 47, 48},
-                        {49, 50, 51, 52, 53, 54, 55, 56},
-                        {157, 158, 159, 160, 161, 162, 163, 164} };
-            double[,] arrd;
-            /*Console.WriteLine("---------------------------");
-            arr.EnterToConsole();
-            Console.WriteLine("---------------------------");
-            arrd = KochZhao.GetDCT(arr);
-            arrd.EnterToConsole();
-            Console.WriteLine("---------------------------");
-            KochZhao.GetIDCT(arrd).EnterToConsole();
-            Console.WriteLine("---------------------------");*/
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -77,23 +58,12 @@ namespace TestCW
         {
             Bitmap img = Image;
             int byteToEncode = textBox1.Text.Length;
-            if (ImageMaxBytes > byteToEncode)
+
+            if (ImageMaxBytes < byteToEncode)
             {
                 if (checkBox1.Checked)
                 {
-                    double coef = (double)byteToEncode / (double)ImageMaxBytes;
-                    int newWidth = (int)((double)Image.Width * coef);
-                    int newHeight = (int)((double)Image.Height * coef);
-
-                    img = Additions.ResizeBitmap(Image, newWidth, newHeight);
-
-                    Image = img;
-                    pictureBox1.Image = img;
-
-                    ImageMaxBytes = (Image.Width / 8) * (Image.Height / 8) / 8;
-
-                    logPanel.Text = "";
-                    logPanel.Text += $"Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)";
+                    img = ResizeBitmapForData((Bitmap)Image.Clone(), byteToEncode);
                 }
                 else
                     return;
@@ -107,6 +77,24 @@ namespace TestCW
             img.Save("encoded.bmp");
             img.Dispose();
             UnlockUI();
+        }
+
+        private Bitmap ResizeBitmapForData(Bitmap image, int byteToEncode)
+        {
+            Bitmap img;
+
+            double coef = (double)byteToEncode / (double)ImageMaxBytes;
+            int newWidth = (int)((double)Image.Width * coef);
+            int newHeight = (int)((double)Image.Height * coef);
+
+            img = Additions.ResizeBitmap((Bitmap)image.Clone(), newWidth, newHeight);
+
+            pictureBox1.Image = img;
+            ImageMaxBytes = (img.Width / 8) * (img.Height / 8) / 8;
+
+            logPanel.Text = "";
+            logPanel.Text += $"Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)";
+            return img;
         }
 
         private async void button3_Click(object sender, EventArgs e)
@@ -127,19 +115,7 @@ namespace TestCW
             {
                 if (checkBox1.Checked)
                 {
-                    double coef = (double)byteToEncode / (double)ImageMaxBytes;
-                    int newWidth = (int)((double)Image.Width * coef);
-                    int newHeight = (int)((double)Image.Height * coef);
-
-                    img = Image.ResizeBitmap(newWidth, newHeight);
-
-                    Image = (Bitmap)img.Clone();
-                    pictureBox1.Image = img;
-
-                    ImageMaxBytes = (Image.Width / 8) * (Image.Height / 8) / 8;
-
-                    logPanel.Text = "";
-                    logPanel.Text += $"Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)";
+                    img = ResizeBitmapForData((Bitmap)Image.Clone(), byteToEncode);
                 }
                 else
                     return;
@@ -150,8 +126,10 @@ namespace TestCW
             string dencodeText = "";
             int badEncoded = 0;
 
+
+
             await Task.Run(() => {
-                img = KochZhao.Encode(Image, Encoding.GetEncoding(1251), textBox1.Text, SelectedSpecter, this, PixelCorrection);
+                img = KochZhao.Encode(img, Encoding.GetEncoding(1251), textBox1.Text, SelectedSpecter, this, PixelCorrection);
             });
 
             img.Save("encoded.bmp");
@@ -162,7 +140,7 @@ namespace TestCW
             });
 
             await Task.Run(() => {
-                (badEncoded, img) = KochZhao.DetectInvalideSqrOctopixels(img, Encoding.GetEncoding(1251), encodeText, dencodeText, (int)numericUpDown1.Value, this);
+                (badEncoded, img) = KochZhao.DetectInvalideSqrOctopixels((Bitmap)img.Clone(), Encoding.GetEncoding(1251), encodeText, dencodeText, (int)numericUpDown1.Value, this);
             });
 
             pictureBox2.Image = img;
@@ -220,6 +198,5 @@ namespace TestCW
             comboBox1.Enabled = true;
             checkBox1.Enabled = true;
         }
-
     }
 }
