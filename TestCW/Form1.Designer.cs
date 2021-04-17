@@ -30,7 +30,7 @@ namespace TestCW
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TextToEncode = new System.Windows.Forms.TextBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
@@ -79,14 +79,14 @@ namespace TestCW
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // textBox1
+            // TextToEncode
             // 
-            this.textBox1.Location = new System.Drawing.Point(449, 374);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(361, 203);
-            this.textBox1.TabIndex = 2;
+            this.TextToEncode.Location = new System.Drawing.Point(449, 374);
+            this.TextToEncode.Multiline = true;
+            this.TextToEncode.Name = "TextToEncode";
+            this.TextToEncode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TextToEncode.Size = new System.Drawing.Size(361, 203);
+            this.TextToEncode.TabIndex = 2;
             // 
             // numericUpDown1
             // 
@@ -373,7 +373,7 @@ namespace TestCW
             this.Controls.Add(this.P1Y);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.TextToEncode);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -397,7 +397,7 @@ namespace TestCW
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox TextToEncode;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label1;

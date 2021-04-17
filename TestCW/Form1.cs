@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,6 +11,8 @@ namespace TestCW
     public partial class Form1 : Form, IProgressChanged
     {
         Bitmap Image;
+        Bitmap EncodedImage;
+        Bitmap AnalysedEncodedImage;
         int ImageMaxBytes = 0;
         int Offset = 25;
         int SelectedSpectrum = 2;
@@ -109,7 +112,7 @@ namespace TestCW
         private void OpenImage_MenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Image | *.bmp";
+            ofd.Filter = "Image file | *.bmp";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 if (Image != null)
@@ -127,8 +130,7 @@ namespace TestCW
         private async void Encoding_MenuItem_Click(object sender, EventArgs e)
         {
             Bitmap img = Image;
-            int byteToEncode = textBox1.Text.Length;
-
+            int byteToEncode = TextToEncode.Text.Length;
             if (ImageMaxBytes < byteToEncode)
             {
                 if (checkBox1.Checked)
@@ -138,11 +140,11 @@ namespace TestCW
                 else
                     return;
             }
-
             LockUI();
             await Task.Run(() => {
-                img = KochZhao.Encode(img, Encoding.GetEncoding(1251), textBox1.Text, SelectedSpectrum, this);
+                img = KochZhao.Encode(img, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
             });
+            EncodedImage = (Bitmap)img.Clone();
             numericUpDown1.Value = byteToEncode;
             img.Save("encoded.bmp");
             img.Dispose();
@@ -153,7 +155,7 @@ namespace TestCW
         {
             LockUI();
             await Task.Run(() => {
-                textBox1.Text = KochZhao.Decode(Image, Encoding.GetEncoding(1251), (int)numericUpDown1.Value, this);
+                TextToEncode.Text = KochZhao.Decode(Image, Encoding.GetEncoding(1251), (int)numericUpDown1.Value, this);
             });
             UnlockUI();
         }
@@ -161,8 +163,7 @@ namespace TestCW
         private async void AnalyseEncoding_MenuItem_Click(object sender, EventArgs e)
         {
             Bitmap img = Image;
-            int byteToEncode = textBox1.Text.Length;
-
+            int byteToEncode = TextToEncode.Text.Length;
             if (ImageMaxBytes < byteToEncode)
             {
                 if (checkBox1.Checked)
@@ -172,46 +173,68 @@ namespace TestCW
                 else
                     return;
             }
-
             LockUI();
-            string encodeText = textBox1.Text;
+            string encodeText = TextToEncode.Text;
             string dencodeText = "";
             int badEncoded = 0;
-
             await Task.Run(() => {
-                img = KochZhao.Encode(img, Encoding.GetEncoding(1251), textBox1.Text, SelectedSpectrum, this);
+                img = KochZhao.Encode(img, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
             });
-
-            img.Save("encoded.bmp");
-            numericUpDown1.Value = textBox1.Text.Length;
-
+            EncodedImage = (Bitmap)img.Clone();
+            numericUpDown1.Value = TextToEncode.Text.Length;
             await Task.Run(() => {
                 dencodeText = KochZhao.Decode(img, Encoding.GetEncoding(1251), (int)numericUpDown1.Value, this);
             });
-
             await Task.Run(() => {
                 (badEncoded, img) = KochZhao.DetectInvalideSqrOctopixels((Bitmap)img.Clone(), Encoding.GetEncoding(1251), encodeText, dencodeText, (int)numericUpDown1.Value, this);
             });
-
+            AnalysedEncodedImage = (Bitmap)img.Clone();
             pictureBox2.Image = img;
             logPanel.Text += $"\r\nBadEncoded: {badEncoded} bits";
-            img.Save("analised.bmp");
             UnlockUI();
         }
 
         private void OpenText_MenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Text file | *.txt";
+            string text = "";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = ofd.FileName;
 
+                using (StreamReader sr = new StreamReader(fileName))
+                {
+                    text = sr.ReadToEnd();
+                }
+            }
+            TextToEncode.Text = text;
         }
 
         private void SaveEncodedImage_MenuItem_Click(object sender, EventArgs e)
         {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Image file | *.bmp";
+
 
         }
 
         private void SaveDecodedText_MenuItem_Click(object sender, EventArgs e)
         {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Text file | *.txt";
 
+            string text = "";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = sfd.FileName;
+
+                using (StreamWriter sw = new StreamWriter(fileName, true, Encoding.UTF8))
+                {
+                    sw.Write(text);
+                }
+            }
         }
 
         private void SaveAnalysedImage_MenuItem_Click(object sender, EventArgs e)
