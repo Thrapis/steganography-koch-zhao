@@ -291,10 +291,12 @@ namespace TestCW
 			return img;
 		}
 
-		public static string Decode(Bitmap img, Encoding encoding, int key, IProgressChanged form = null)
+		public static string Decode(Bitmap toCloneImg, Encoding encoding, int key, IProgressChanged form = null)
 		{
 			if (form != null)
 				form.ChangeProgress(1);
+
+			Bitmap img = (Bitmap)toCloneImg.Clone();
 
 			List<bool> textBits = new List<bool>();
 			int l = 0;
@@ -353,10 +355,12 @@ namespace TestCW
 			return text;
 		}
 
-		public static (int, Bitmap) DetectInvalideSqrOctopixels(Bitmap img, Encoding encoding, string encodeText, string decodeText, int key, IProgressChanged form = null)
+		public static (int, Bitmap) DetectInvalideSqrOctopixels(Bitmap toCloneImg, Encoding encoding, string encodeText, string decodeText, int key, IProgressChanged form = null)
 		{
 			if (form != null)
 				form.ChangeProgress(5);
+
+			Bitmap img = (Bitmap)toCloneImg.Clone();
 
 			Color[,] colors = new Color[8, 8];
 			int l = 0;

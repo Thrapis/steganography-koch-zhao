@@ -195,7 +195,7 @@ namespace TestCW
             this.Offset_NumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.Offset_NumericUpDown.Location = new System.Drawing.Point(10, 507);
             this.Offset_NumericUpDown.Maximum = new decimal(new int[] {
-            255,
+            1000,
             0,
             0,
             0});
@@ -297,7 +297,7 @@ namespace TestCW
             this.clearToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1325, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(1325, 28);
             this.menuStrip1.TabIndex = 25;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -361,22 +361,22 @@ namespace TestCW
             // encodeToolStripMenuItem
             // 
             this.encodeToolStripMenuItem.Name = "encodeToolStripMenuItem";
-            this.encodeToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
+            this.encodeToolStripMenuItem.Size = new System.Drawing.Size(240, 26);
             this.encodeToolStripMenuItem.Text = "Encoding";
             this.encodeToolStripMenuItem.Click += new System.EventHandler(this.Encoding_MenuItem_Click);
             // 
             // decodeToolStripMenuItem
             // 
             this.decodeToolStripMenuItem.Name = "decodeToolStripMenuItem";
-            this.decodeToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
+            this.decodeToolStripMenuItem.Size = new System.Drawing.Size(240, 26);
             this.decodeToolStripMenuItem.Text = "Decoding";
             this.decodeToolStripMenuItem.Click += new System.EventHandler(this.Decoding_MenuItem_Click);
             // 
             // analyseEncodingToolStripMenuItem
             // 
             this.analyseEncodingToolStripMenuItem.Name = "analyseEncodingToolStripMenuItem";
-            this.analyseEncodingToolStripMenuItem.Size = new System.Drawing.Size(209, 26);
-            this.analyseEncodingToolStripMenuItem.Text = "Analyse encoding";
+            this.analyseEncodingToolStripMenuItem.Size = new System.Drawing.Size(240, 26);
+            this.analyseEncodingToolStripMenuItem.Text = "Analyse encoded JPEG";
             this.analyseEncodingToolStripMenuItem.Click += new System.EventHandler(this.AnalyseEncoding_MenuItem_Click);
             // 
             // clearToolStripMenuItem

@@ -47,11 +47,11 @@ namespace TestCW
 			img = Additions.ResizeBitmap(image, newWidth, newHeight);
 
 			Image_PictureBox.Image = img;
+			OpenedImage = img;
 			ImageMaxBytes = (img.Width / 8) * (img.Height / 8) / 8;
 
-			LogPanel.Text = "";
-			LogPanel.Text += $"Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)";
-			return img;
+			Log($"Image resized. Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)");
+			return (Bitmap)img.Clone();
 		}
 
 		private void PropertiesChanged(object sender, EventArgs e)
@@ -141,8 +141,8 @@ namespace TestCW
 		private void Log(string message)
         {
 			if (LogPanel.Text.Length != 0)
-				LogPanel.Text += "\r\n";
-			LogPanel.Text += message + "\r\n";
+				LogPanel.AppendText("\r\n");
+			LogPanel.AppendText($"{DateTime.Now} - " + message + "\r\n");
 		}
 
 		private void Image_PictureBox_Click(object sender, EventArgs e)
@@ -217,7 +217,7 @@ namespace TestCW
 			EncodedImage = (Bitmap)img.Clone();
 			EncodedImage_PictureBox.Image = EncodedImage;
 			Key_NumericUpDown.Value = byteToEncode;
-			Log($"{DateTime.Now} - Encoded: {TextToEncode.Text.Length} bytes");
+			Log($"Encoded: {TextToEncode.Text.Length} bytes");
 			img.Dispose();
 			UnlockUI();
 		}
@@ -230,7 +230,7 @@ namespace TestCW
 				TextToDecode.Text = KochZhao.Decode(OpenedImage, Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
 			});
 			ProgressBarText.Text = "";
-			Log($"{DateTime.Now} - Decoded: {TextToDecode.Text.Length} bytes");
+			Log($"Decoded: {TextToDecode.Text.Length} bytes");
 			UnlockUI();
 		}
 
@@ -255,31 +255,39 @@ namespace TestCW
 			await Task.Run(() => {
 				img = KochZhao.Encode((Bitmap)img.Clone(), Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
 			});
+			Log($"Encoded: {TextToEncode.Text.Length} bytes");
 			EncodedImage = (Bitmap)img.Clone();
+			img.Save("temp.jpg", ImageFormat.Jpeg);
+			Bitmap encodedJpegImg = null;
+			using (Stream bmpStream = File.Open("temp.jpg", FileMode.Open))
+			{
+				encodedJpegImg = (Bitmap)Image.FromStream(bmpStream);
+			}
+			File.Delete("temp.jpg");
 			EncodedImage_PictureBox.Image = EncodedImage;
 			Key_NumericUpDown.Value = TextToEncode.Text.Length;
-			Log($"{DateTime.Now} - Encoded: {TextToEncode.Text.Length} bytes");
 			ProgressBarText.Text = "Decoding";
 			await Task.Run(() => {
-				decodeText = KochZhao.Decode(img, Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
+				decodeText = KochZhao.Decode((Bitmap)encodedJpegImg.Clone(), Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
 			});
 			TextToDecode.Text = decodeText;
-			Log($"{DateTime.Now} - Decoded: {TextToDecode.Text.Length} bytes");
+			Log($"Decoded: {TextToDecode.Text.Length} bytes");
 			ProgressBarText.Text = "Analysing";
+			Bitmap analysedImg = null;
 			await Task.Run(() => {
-				(badEncoded, img) = KochZhao.DetectInvalideSqrOctopixels((Bitmap)img.Clone(), Encoding.GetEncoding(1251), encodeText, decodeText, (int)Key_NumericUpDown.Value, this);
+				(badEncoded, analysedImg) = KochZhao.DetectInvalideSqrOctopixels((Bitmap)img.Clone(), Encoding.GetEncoding(1251), encodeText, decodeText, (int)Key_NumericUpDown.Value, this);
 			});
 			ProgressBarText.Text = "";
-			AnalysedEncodedImage = (Bitmap)img.Clone();
+			AnalysedEncodedImage = (Bitmap)analysedImg.Clone();
 			AnalysedImage_PictureBox.Image = AnalysedEncodedImage;
-			Log($"{DateTime.Now} - BadEncoded: {badEncoded} bits");
+			Log($"BadEncoded: {badEncoded}/{(int)Key_NumericUpDown.Value * 8} bits");
 			UnlockUI();
 		}
 
 		private void OpenText_MenuItem_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.Filter = "Text file | *.txt";
+			ofd.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
 			string text = "";
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
@@ -289,7 +297,7 @@ namespace TestCW
 				{
 					text = sr.ReadToEnd();
 				}
-				Log($"{DateTime.Now} - Opened text file {fileName}");
+				Log($"Opened text file {fileName}");
 			}
 			TextToEncode.Text = text;
 		}
@@ -313,7 +321,7 @@ namespace TestCW
 					case 2: EncodedImage.Save(fileName, ImageFormat.Png); break;
 					case 3: EncodedImage.Save(fileName, ImageFormat.Jpeg); break;
 				}
-				Log($"{DateTime.Now} - Saved encoded image {fileName}");
+				Log($"Saved encoded image {fileName}");
 			}
 		}
 
@@ -323,7 +331,7 @@ namespace TestCW
 			sfd.Title = "Save Decoded Text";
 			sfd.AddExtension = true;
 			sfd.DefaultExt = "*.txt";
-			sfd.Filter = "Text file | *.txt";
+			sfd.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
 
 			string text = TextToDecode.Text;
 
@@ -335,7 +343,7 @@ namespace TestCW
 				{
 					sw.Write(text);
 				}
-				Log($"{DateTime.Now} - Saved decoded text {fileName}");
+				Log($"Saved decoded text {fileName}");
 			}
 		}
 
@@ -358,7 +366,7 @@ namespace TestCW
 					case 2: AnalysedEncodedImage.Save(fileName, ImageFormat.Png); break;
 					case 3: AnalysedEncodedImage.Save(fileName, ImageFormat.Jpeg); break;
 				}
-				Log($"{DateTime.Now} - Saved analysed image {fileName}");
+				Log($"Saved analysed image {fileName}");
 			}
 		}
 
