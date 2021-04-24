@@ -1,7 +1,7 @@
 ﻿
 namespace TestCW
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -29,7 +29,7 @@ namespace TestCW
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.Image_PictureBox = new System.Windows.Forms.PictureBox();
             this.TextToEncode = new System.Windows.Forms.TextBox();
             this.Key_NumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -60,6 +60,7 @@ namespace TestCW
             this.decodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analyseEncodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TextToDecode = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.EncodedImage_PictureBox = new System.Windows.Forms.PictureBox();
@@ -294,7 +295,8 @@ namespace TestCW
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.actionsToolStripMenuItem,
-            this.clearToolStripMenuItem});
+            this.clearToolStripMenuItem,
+            this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1325, 28);
@@ -310,7 +312,7 @@ namespace TestCW
             this.saveDecodedTextToolStripMenuItem,
             this.saveAnalisedImageToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openImageToolStripMenuItem
@@ -355,7 +357,7 @@ namespace TestCW
             this.decodeToolStripMenuItem,
             this.analyseEncodingToolStripMenuItem});
             this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
-            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
+            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(72, 26);
             this.actionsToolStripMenuItem.Text = "Actions";
             // 
             // encodeToolStripMenuItem
@@ -382,9 +384,16 @@ namespace TestCW
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(57, 26);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.Clear_MenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(64, 26);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_MenuItem_Click);
             // 
             // TextToDecode
             // 
@@ -484,7 +493,7 @@ namespace TestCW
             this.ProgressBarText.Size = new System.Drawing.Size(0, 25);
             this.ProgressBarText.TabIndex = 35;
             // 
-            // Form1
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -521,7 +530,7 @@ namespace TestCW
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Koch&Zhao";
             ((System.ComponentModel.ISupportInitialize)(this.Image_PictureBox)).EndInit();
@@ -582,6 +591,7 @@ namespace TestCW
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         private System.Windows.Forms.Label ProgressBarText;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

@@ -174,7 +174,40 @@ namespace TestCW
 			return buf_dct;
 		}
 
-        private static void SetSpectrumMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
+		private static double[,] SetBitToSqrOctopletLight(double[,] dct, bool bit)
+		{
+			double k;
+			double[,] buf_dct = dct.Copy();
+
+			bool encr_bit = false;
+			while (!encr_bit)
+			{
+				k = Math.Abs(buf_dct[P1.Y, P1.X]) - Math.Abs(buf_dct[P2.Y, P2.X]);
+				if (bit) // K1 - K2 > Offset    ->   1
+				{
+					if (k <= Offset)
+					{
+						buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? 1 : -1;
+						buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? -1 : 1;
+					}
+					else
+						encr_bit = true;
+				}
+				else            // K1 - K2 < -Offset     ->   0
+				{
+					if (k >= -Offset)
+					{
+						buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? -1 : 1;
+						buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? 1 : -1;
+					}
+					else
+						encr_bit = true;
+				}
+			}
+			return buf_dct;
+		}
+
+		private static void SetSpectrumMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
         {
             for (int i = 0; i + 7 < img.Height; i += 8)
             {
@@ -260,12 +293,16 @@ namespace TestCW
 
 					bool bit;
 					if (l < textBits.Count)
+                    {
 						bit = textBits[l];
+						dct = SetBitToSqrOctoplet(dct, bit);
+					}
 					else
+                    {
 						bit = rand.Next(0, 2) == 1 ? true : false;
-
-					dct = SetBitToSqrOctoplet(dct, bit);
-
+						dct = SetBitToSqrOctopletLight(dct, bit);
+					}
+						
 					temp_bm = GetIDCT(dct);
 
 					for (int y = 0; y < 8; y++)

@@ -9,19 +9,19 @@ using System.Windows.Forms;
 
 namespace TestCW
 {
-	public partial class Form1 : Form, IProgressChanged
+	public partial class Main : Form, IProgressChanged
 	{
-		Bitmap OpenedImage;
-		Bitmap EncodedImage;
-		Bitmap AnalysedEncodedImage;
-		int ImageMaxBytes = 0;
-		int Offset = 25;
-		int SelectedSpectrum = 2;
-		Point P1 = new Point(3, 4);
-		Point P2 = new Point(4, 3);
-		bool UILocked = false;
+		private Bitmap OpenedImage;
+		private Bitmap EncodedImage;
+		private Bitmap AnalysedEncodedImage;
+		private int ImageMaxBytes = 0;
+		private int Offset = 25;
+		private int SelectedSpectrum = 2;
+		private Point P1 = new Point(3, 4);
+		private Point P2 = new Point(4, 3);
+		private bool UILocked = false;
 
-		public Form1()
+		public Main()
 		{
 			InitializeComponent();
 			List<string> lst = new List<string>() { "Red", "Green", "Blue" };
@@ -44,13 +44,15 @@ namespace TestCW
 			int newWidth = (int)((double)OpenedImage.Width * coef);
 			int newHeight = (int)((double)OpenedImage.Height * coef);
 
+			DateTime time1 = DateTime.Now;
 			img = Additions.ResizeBitmap(image, newWidth, newHeight);
+			DateTime time2 = DateTime.Now;
 
 			Image_PictureBox.Image = img;
 			OpenedImage = img;
 			ImageMaxBytes = (img.Width / 8) * (img.Height / 8) / 8;
 
-			Log($"Image resized. Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits)");
+			Log($"Image resized. Can be encoded {ImageMaxBytes} bytes ({ImageMaxBytes * 8} bits). Resize image time {time2 - time1}");
 			return (Bitmap)img.Clone();
 		}
 
@@ -89,6 +91,9 @@ namespace TestCW
 				openImageToolStripMenuItem.Enabled = false;
 				openTextToolStripMenuItem.Enabled = false;
 				clearToolStripMenuItem.Enabled = false;
+				Image_PictureBox.Enabled = false;
+				TextToEncode.Enabled = false;
+				TextToDecode.Enabled = false;
 
 				UILocked = true;
 			}
@@ -110,6 +115,9 @@ namespace TestCW
 				openImageToolStripMenuItem.Enabled = true;
 				openTextToolStripMenuItem.Enabled = true;
 				clearToolStripMenuItem.Enabled = true;
+				Image_PictureBox.Enabled = true;
+				TextToEncode.Enabled = true;
+				TextToDecode.Enabled = true;
 
 				UILocked = false;
 			}
@@ -203,21 +211,28 @@ namespace TestCW
 			{
 				if (Resize_CheckBox.Checked)
 				{
-					img = ResizeBitmapForData(OpenedImage, byteToEncode);
+					img = ResizeBitmapForData((Bitmap)OpenedImage.Clone(), byteToEncode);
 				}
 				else
+				{
+					MessageBox.Show("Image too small to encode this text!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
+				}
 			}
 			LockUI();
 			ProgressBarText.Text = "Encoding";
+			Bitmap buf = new Bitmap(img);
+			img.Dispose();
+			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
-				img = KochZhao.Encode((Bitmap)img.Clone(), Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
+				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
 			});
+			DateTime time2 = DateTime.Now;
 			ProgressBarText.Text = "";
 			EncodedImage = (Bitmap)img.Clone();
 			EncodedImage_PictureBox.Image = EncodedImage;
 			Key_NumericUpDown.Value = byteToEncode;
-			Log($"Encoded: {TextToEncode.Text.Length} bytes");
+			Log($"Encoded: {TextToEncode.Text.Length} bytes. Encoding time {time2 - time1}");
 			img.Dispose();
 			UnlockUI();
 		}
@@ -226,11 +241,13 @@ namespace TestCW
 		{
 			LockUI();
 			ProgressBarText.Text = "Decoding";
+			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
 				TextToDecode.Text = KochZhao.Decode(OpenedImage, Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
 			});
+			DateTime time2 = DateTime.Now;
 			ProgressBarText.Text = "";
-			Log($"Decoded: {TextToDecode.Text.Length} bytes");
+			Log($"Decoded: {TextToDecode.Text.Length} bytes. Decoding time {time2 - time1}");
 			UnlockUI();
 		}
 
@@ -242,18 +259,24 @@ namespace TestCW
 			{
 				if (Resize_CheckBox.Checked)
 				{
-					img = ResizeBitmapForData(OpenedImage, byteToEncode);
+					img = ResizeBitmapForData((Bitmap)OpenedImage.Clone(), byteToEncode);
 				}
 				else
+				{
+					MessageBox.Show("Image too small to encode this text!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
+				}
 			}
 			LockUI();
 			string encodeText = TextToEncode.Text;
 			string decodeText = "";
 			int badEncoded = 0;
 			ProgressBarText.Text = "Encoding";
+			Bitmap buf = new Bitmap(img);
+			img.Dispose();
+			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
-				img = KochZhao.Encode((Bitmap)img.Clone(), Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
+				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
 			});
 			Log($"Encoded: {TextToEncode.Text.Length} bytes");
 			EncodedImage = (Bitmap)img.Clone();
@@ -277,29 +300,28 @@ namespace TestCW
 			await Task.Run(() => {
 				(badEncoded, analysedImg) = KochZhao.DetectInvalideSqrOctopixels((Bitmap)img.Clone(), Encoding.GetEncoding(1251), encodeText, decodeText, (int)Key_NumericUpDown.Value, this);
 			});
+			DateTime time2 = DateTime.Now;
 			ProgressBarText.Text = "";
 			AnalysedEncodedImage = (Bitmap)analysedImg.Clone();
 			AnalysedImage_PictureBox.Image = AnalysedEncodedImage;
-			Log($"BadEncoded: {badEncoded}/{(int)Key_NumericUpDown.Value * 8} bits");
+			Log($"BadEncoded: {badEncoded}/{(int)Key_NumericUpDown.Value * 8} bits. Analyse encoding time {time2 - time1}");
 			UnlockUI();
 		}
 
 		private void OpenText_MenuItem_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.Title = "Open text";
 			ofd.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
-			string text = "";
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				string fileName = ofd.FileName;
-
 				using (StreamReader sr = new StreamReader(fileName))
 				{
-					text = sr.ReadToEnd();
+					TextToEncode.Text = sr.ReadToEnd();
 				}
-				Log($"Opened text file {fileName}");
+				Log($"Opened text file {fileName}. Text weight {TextToEncode.Text.Length} bytes");
 			}
-			TextToEncode.Text = text;
 		}
 
 		private void SaveEncodedImage_MenuItem_Click(object sender, EventArgs e)
@@ -339,7 +361,7 @@ namespace TestCW
 			{
 				string fileName = sfd.FileName;
 
-				using (StreamWriter sw = new StreamWriter(fileName, true, Encoding.UTF8))
+				using (StreamWriter sw = new StreamWriter(fileName, true, Encoding.ASCII))
 				{
 					sw.Write(text);
 				}
@@ -391,6 +413,12 @@ namespace TestCW
 			Spectrum_ComboBox.SelectedIndex = 2;
 			ChangeProgress(0);
 			PropertiesChanged(null, null);
+        }
+
+        private void About_MenuItem_Click(object sender, EventArgs e)
+        {
+			AboutWindow window = new AboutWindow();
+			window.ShowDialog();
         }
     }
 }
