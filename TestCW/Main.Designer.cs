@@ -247,6 +247,7 @@ namespace TestCW
             // 
             // AnalysedImage_PictureBox
             // 
+            this.AnalysedImage_PictureBox.BackColor = System.Drawing.Color.White;
             this.AnalysedImage_PictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.AnalysedImage_PictureBox.Location = new System.Drawing.Point(1005, 63);
             this.AnalysedImage_PictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 3, 30);
@@ -254,9 +255,11 @@ namespace TestCW
             this.AnalysedImage_PictureBox.Size = new System.Drawing.Size(308, 408);
             this.AnalysedImage_PictureBox.TabIndex = 20;
             this.AnalysedImage_PictureBox.TabStop = false;
+            this.AnalysedImage_PictureBox.Click += new System.EventHandler(this.SaveAnalysedImage_MenuItem_Click);
             // 
             // LogPanel
             // 
+            this.LogPanel.BackColor = System.Drawing.Color.White;
             this.LogPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.LogPanel.Location = new System.Drawing.Point(10, 63);
             this.LogPanel.Multiline = true;
@@ -312,7 +315,7 @@ namespace TestCW
             this.saveDecodedTextToolStripMenuItem,
             this.saveAnalisedImageToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openImageToolStripMenuItem
@@ -357,7 +360,7 @@ namespace TestCW
             this.decodeToolStripMenuItem,
             this.analyseEncodingToolStripMenuItem});
             this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
-            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(72, 26);
+            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
             this.actionsToolStripMenuItem.Text = "Actions";
             // 
             // encodeToolStripMenuItem
@@ -384,14 +387,14 @@ namespace TestCW
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(57, 26);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.Clear_MenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(64, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(64, 24);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.About_MenuItem_Click);
             // 
@@ -403,6 +406,7 @@ namespace TestCW
             this.TextToDecode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TextToDecode.Size = new System.Drawing.Size(458, 203);
             this.TextToDecode.TabIndex = 26;
+            this.TextToDecode.DoubleClick += new System.EventHandler(this.SaveDecodedText_MenuItem_Click);
             // 
             // label6
             // 
@@ -416,12 +420,14 @@ namespace TestCW
             // 
             // EncodedImage_PictureBox
             // 
+            this.EncodedImage_PictureBox.BackColor = System.Drawing.Color.White;
             this.EncodedImage_PictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.EncodedImage_PictureBox.Location = new System.Drawing.Point(685, 63);
             this.EncodedImage_PictureBox.Name = "EncodedImage_PictureBox";
             this.EncodedImage_PictureBox.Size = new System.Drawing.Size(308, 408);
             this.EncodedImage_PictureBox.TabIndex = 28;
             this.EncodedImage_PictureBox.TabStop = false;
+            this.EncodedImage_PictureBox.Click += new System.EventHandler(this.SaveEncodedImage_MenuItem_Click);
             // 
             // label7
             // 

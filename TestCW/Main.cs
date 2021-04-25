@@ -92,6 +92,8 @@ namespace TestCW
 				openTextToolStripMenuItem.Enabled = false;
 				clearToolStripMenuItem.Enabled = false;
 				Image_PictureBox.Enabled = false;
+				EncodedImage_PictureBox.Enabled = false;
+				AnalysedImage_PictureBox.Enabled = false;
 				TextToEncode.Enabled = false;
 				TextToDecode.Enabled = false;
 
@@ -116,6 +118,8 @@ namespace TestCW
 				openTextToolStripMenuItem.Enabled = true;
 				clearToolStripMenuItem.Enabled = true;
 				Image_PictureBox.Enabled = true;
+				EncodedImage_PictureBox.Enabled = true;
+				AnalysedImage_PictureBox.Enabled = true;
 				TextToEncode.Enabled = true;
 				TextToDecode.Enabled = true;
 
@@ -222,7 +226,6 @@ namespace TestCW
 			LockUI();
 			ProgressBarText.Text = "Encoding";
 			Bitmap buf = new Bitmap(img);
-			img.Dispose();
 			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
 				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
@@ -233,7 +236,6 @@ namespace TestCW
 			EncodedImage_PictureBox.Image = EncodedImage;
 			Key_NumericUpDown.Value = byteToEncode;
 			Log($"Encoded: {TextToEncode.Text.Length} bytes. Encoding time {time2 - time1}");
-			img.Dispose();
 			UnlockUI();
 		}
 
@@ -273,7 +275,6 @@ namespace TestCW
 			int badEncoded = 0;
 			ProgressBarText.Text = "Encoding";
 			Bitmap buf = new Bitmap(img);
-			img.Dispose();
 			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
 				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
@@ -326,6 +327,9 @@ namespace TestCW
 
 		private void SaveEncodedImage_MenuItem_Click(object sender, EventArgs e)
 		{
+			if (EncodedImage == null)
+				return;
+
 			SaveFileDialog sfd = new SaveFileDialog();
 			sfd.Title = "Save Encoded Image";
 			sfd.AddExtension = true;
@@ -349,6 +353,9 @@ namespace TestCW
 
 		private void SaveDecodedText_MenuItem_Click(object sender, EventArgs e)
 		{
+			if (TextToDecode.Text.Length == 0)
+				return;
+
 			SaveFileDialog sfd = new SaveFileDialog();
 			sfd.Title = "Save Decoded Text";
 			sfd.AddExtension = true;
@@ -371,6 +378,9 @@ namespace TestCW
 
 		private void SaveAnalysedImage_MenuItem_Click(object sender, EventArgs e)
 		{
+			if (AnalysedEncodedImage == null)
+				return;
+
 			SaveFileDialog sfd = new SaveFileDialog();
 			sfd.Title = "Save Analysed Image";
 			sfd.AddExtension = true;
