@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 namespace TestCW
 {
     /// <summary>
-    /// Интерфейс поддержки индикатора прогресса
+    /// Перечисление спектров изображения
     /// </summary>
-    public interface IProgressChanged
+    public enum Spectrum
     {
-        void ChangeProgress(int val);
+        Red,
+        Green,
+        Blue
     }
 }

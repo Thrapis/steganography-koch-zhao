@@ -16,7 +16,7 @@ namespace TestCW
 		private Bitmap AnalysedEncodedImage;
 		private int ImageMaxBytes = 0;
 		private int Offset = 25;
-		private int SelectedSpectrum = 2;
+		private Spectrum SelectedSpectrum = Spectrum.Blue;
 		private Point P1 = new Point(3, 4);
 		private Point P2 = new Point(4, 3);
 		private bool UILocked = false;
@@ -24,9 +24,11 @@ namespace TestCW
 		public Main()
 		{
 			InitializeComponent();
-			List<string> lst = new List<string>() { "Red", "Green", "Blue" };
-			Spectrum_ComboBox.Items.AddRange(lst.ToArray());
-			Spectrum_ComboBox.SelectedIndex = 2;
+			Spectrum_ComboBox.Items.Add(Spectrum.Red);
+			Spectrum_ComboBox.Items.Add(Spectrum.Green);
+			Spectrum_ComboBox.Items.Add(Spectrum.Blue);
+			Spectrum_ComboBox.SelectedItem = Spectrum.Blue;
+			Spectrum_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
 			Image_PictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 			Image_PictureBox.BackgroundImageLayout = ImageLayout.Stretch;
@@ -36,6 +38,9 @@ namespace TestCW
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Подогнать размер изображения под записываемое сообщение
+		/// </summary>
 		private Bitmap ResizeBitmapForData(Bitmap image, int byteToEncode)
 		{
 			Bitmap img;
@@ -56,18 +61,23 @@ namespace TestCW
 			return (Bitmap)img.Clone();
 		}
 
+		/// <summary>
+		/// Настройки кодировки или декодировки изменились
+		/// </summary>
 		private void PropertiesChanged(object sender, EventArgs e)
 		{
 			Offset = (int)Offset_NumericUpDown.Value;
-			SelectedSpectrum = Spectrum_ComboBox.SelectedIndex;
+			SelectedSpectrum = (Spectrum)Spectrum_ComboBox.SelectedItem;
 			P1 = new Point(P1X.Value, P1Y.Value);
 			P2 = new Point(P2X.Value, P2Y.Value);
 			label1.Text = $"P1 = [{P1.Y}, {P1.X}]";
 			label2.Text = $"P2 = [{P2.Y}, {P2.X}]";
-			KochZhao.SetSettings(Offset, SelectedSpectrum, P1, P2);
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Прогресс процесса изменился
+		/// </summary>
 		public void ChangeProgress(int val)
 		{
 			if (InvokeRequired)
@@ -76,6 +86,9 @@ namespace TestCW
 				ProgressBar.Value = val;
 		}
 
+		/// <summary>
+		/// Заблокировать интерфейс
+		/// </summary>
 		private void LockUI()
 		{
 			if (!UILocked)
@@ -102,6 +115,9 @@ namespace TestCW
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Разблокировать интерфейс
+		/// </summary>
 		private void UnlockUI()
 		{
 			if (UILocked)
@@ -128,6 +144,9 @@ namespace TestCW
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Обновить состояние кнопок
+		/// </summary>
 		private void UpdateButtonsState()
 		{
 			if (UILocked)
@@ -150,6 +169,9 @@ namespace TestCW
 			}
 		}
 
+		/// <summary>
+		/// Записать сообщение в логгер
+		/// </summary>
 		private void Log(string message)
         {
 			if (LogPanel.Text.Length != 0)
@@ -157,6 +179,9 @@ namespace TestCW
 			LogPanel.AppendText($"{DateTime.Now} - " + message + "\r\n");
 		}
 
+		/// <summary>
+		/// Нажатие на область оригинального изображения
+		/// </summary>
 		private void Image_PictureBox_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
@@ -182,6 +207,9 @@ namespace TestCW
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку открытия изображения
+		/// </summary>
 		private void OpenImage_MenuItem_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
@@ -207,8 +235,12 @@ namespace TestCW
 			UpdateButtonsState();
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку закодирования сообщения
+		/// </summary>
 		private async void Encoding_MenuItem_Click(object sender, EventArgs e)
 		{
+			KochZhaoParameters parameters = new KochZhaoParameters(P1, P2, Offset, SelectedSpectrum);
 			Bitmap img = OpenedImage;
 			int byteToEncode = TextToEncode.Text.Length;
 			if (ImageMaxBytes < byteToEncode)
@@ -228,7 +260,7 @@ namespace TestCW
 			Bitmap buf = new Bitmap(img);
 			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
-				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
+				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, parameters, this);
 			});
 			DateTime time2 = DateTime.Now;
 			ProgressBarText.Text = "";
@@ -239,13 +271,17 @@ namespace TestCW
 			UnlockUI();
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку декодирования сообщения
+		/// </summary>
 		private async void Decoding_MenuItem_Click(object sender, EventArgs e)
 		{
+			KochZhaoParameters parameters = new KochZhaoParameters(P1, P2, Offset, SelectedSpectrum);
 			LockUI();
 			ProgressBarText.Text = "Decoding";
 			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
-				TextToDecode.Text = KochZhao.Decode(OpenedImage, Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
+				TextToDecode.Text = KochZhao.Decode(OpenedImage, Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, parameters, this);
 			});
 			DateTime time2 = DateTime.Now;
 			ProgressBarText.Text = "";
@@ -253,8 +289,12 @@ namespace TestCW
 			UnlockUI();
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку анализа кодирования и декодирования изображения в формате JPEG
+		/// </summary>
 		private async void AnalyseEncoding_MenuItem_Click(object sender, EventArgs e)
 		{
+			KochZhaoParameters parameters = new KochZhaoParameters(P1, P2, Offset, SelectedSpectrum);
 			Bitmap img = OpenedImage;
 			int byteToEncode = TextToEncode.Text.Length;
 			if (ImageMaxBytes < byteToEncode)
@@ -277,7 +317,7 @@ namespace TestCW
 			Bitmap buf = new Bitmap(img);
 			DateTime time1 = DateTime.Now;
 			await Task.Run(() => {
-				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, SelectedSpectrum, this);
+				img = KochZhao.Encode(buf, Encoding.GetEncoding(1251), TextToEncode.Text, parameters, this);
 			});
 			Log($"Encoded: {TextToEncode.Text.Length} bytes");
 			EncodedImage = (Bitmap)img.Clone();
@@ -292,7 +332,7 @@ namespace TestCW
 			Key_NumericUpDown.Value = TextToEncode.Text.Length;
 			ProgressBarText.Text = "Decoding";
 			await Task.Run(() => {
-				decodeText = KochZhao.Decode((Bitmap)encodedJpegImg.Clone(), Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, this);
+				decodeText = KochZhao.Decode((Bitmap)encodedJpegImg.Clone(), Encoding.GetEncoding(1251), (int)Key_NumericUpDown.Value, parameters, this);
 			});
 			TextToDecode.Text = decodeText;
 			Log($"Decoded: {TextToDecode.Text.Length} bytes");
@@ -309,6 +349,9 @@ namespace TestCW
 			UnlockUI();
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку открытия текста для кодирования
+		/// </summary>
 		private void OpenText_MenuItem_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
@@ -325,6 +368,9 @@ namespace TestCW
 			}
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку сохранения закодированного изображения
+		/// </summary>
 		private void SaveEncodedImage_MenuItem_Click(object sender, EventArgs e)
 		{
 			if (EncodedImage == null)
@@ -351,6 +397,9 @@ namespace TestCW
 			}
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку сохранения декодированного сообщения
+		/// </summary>
 		private void SaveDecodedText_MenuItem_Click(object sender, EventArgs e)
 		{
 			if (TextToDecode.Text.Length == 0)
@@ -376,6 +425,9 @@ namespace TestCW
 			}
 		}
 
+		/// <summary>
+		/// Нажатие на кнопку сохранения анализированнго изображения
+		/// </summary>
 		private void SaveAnalysedImage_MenuItem_Click(object sender, EventArgs e)
 		{
 			if (AnalysedEncodedImage == null)
@@ -402,7 +454,10 @@ namespace TestCW
 			}
 		}
 
-        private void Clear_MenuItem_Click(object sender, EventArgs e)
+		/// <summary>
+		/// Нажатие на кнопку сброса интерфейса изображения до состояния по умолчания
+		/// </summary>
+		private void Clear_MenuItem_Click(object sender, EventArgs e)
         {
 			OpenedImage = null;
 			EncodedImage = null;
@@ -420,12 +475,15 @@ namespace TestCW
 			P2X.Value = 3;
 			LogPanel.Text = "";
 			Resize_CheckBox.Checked = true;
-			Spectrum_ComboBox.SelectedIndex = 2;
+			Spectrum_ComboBox.SelectedItem = Spectrum.Blue;
 			ChangeProgress(0);
 			PropertiesChanged(null, null);
         }
 
-        private void About_MenuItem_Click(object sender, EventArgs e)
+		/// <summary>
+		/// Нажатие на кнопку о приложении
+		/// </summary>
+		private void About_MenuItem_Click(object sender, EventArgs e)
         {
 			AboutWindow window = new AboutWindow();
 			window.ShowDialog();

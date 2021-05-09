@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestCW
 {
+    /// <summary>
+    /// Класс методов расширения
+    /// </summary>
     public static class Additions
     {
+        /// <summary>
+        /// Вывод на консоль массива байт
+        /// </summary>
         public static void EnterToConsole(this byte[,] arr)
         {
             for (int i = 0; i < 8; i++)
@@ -24,6 +24,9 @@ namespace TestCW
             }
         }
 
+        /// <summary>
+        /// Вывод на консоль массива чисел с двойной точностью
+        /// </summary>
         public static void EnterToConsole(this double[,] arr)
         {
             for (int i = 0; i < 8; i++)
@@ -36,21 +39,38 @@ namespace TestCW
             }
         }
 
-        public static void EnterToConsole(this Bitmap arr)
+        /// <summary>
+        /// Вывод на консоль спектр изображения
+        /// </summary>
+        public static void EnterToConsole(this Bitmap arr, Spectrum spectrum)
         {
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Console.Write(arr.GetPixel(j, i).B + "\t");
+                    switch (spectrum)
+                    {
+                        case Spectrum.Red:
+                            Console.Write(arr.GetPixel(j, i).R + "\t");
+                            break;
+                        case Spectrum.Green:
+                            Console.Write(arr.GetPixel(j, i).G + "\t");
+                            break;
+                        case Spectrum.Blue:
+                            Console.Write(arr.GetPixel(j, i).B + "\t");
+                            break;
+                    }
                 }
                 Console.WriteLine();
             }
         }
 
+        /// <summary>
+        /// Конвертирование массива бит в массив байт
+        /// </summary>
         public static byte[] BitArrayToByteArray(this BitArray bitsArray)
         {
-            byte[] ret = new byte[bitsArray.Length / 8];
+            byte[] result = new byte[bitsArray.Length / 8];
 
             for (int i = 0; i + 7 < bitsArray.Length; i += 8)
             {
@@ -58,12 +78,15 @@ namespace TestCW
                     bitsArray[i + 3], bitsArray[i + 2], bitsArray[i + 1], bitsArray[i]};
                 BitArray bits = new BitArray(boolArray);
 
-                bits.CopyTo(ret, i / 8);
+                bits.CopyTo(result, i / 8);
             }
 
-            return ret;
+            return result;
         }
 
+        /// <summary>
+        /// Изменение размера изображения
+        /// </summary>
         public static Bitmap ResizeBitmap(this Bitmap bmp, int width, int height)
         {
             Bitmap result = new Bitmap(width, height);
@@ -76,9 +99,13 @@ namespace TestCW
             return result;
         }
 
+        /// <summary>
+        /// Копирование двумерного массива чисел
+        /// </summary>
         public static double[,] Copy(this double[,] arr)
         {
             double[,] result = new double[arr.GetLength(0), arr.GetLength(1)];
+
             for (int i = 0; i < arr.GetLength(0); i++)
             {
                 for (int j = 0; j < arr.GetLength(1); j++)
@@ -86,6 +113,7 @@ namespace TestCW
                     result[i, j] = arr[i, j];
                 }
             }
+
             return result;
         }
     }

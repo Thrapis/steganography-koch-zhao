@@ -4,34 +4,20 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TestCW
 {
+	/// <summary>
+	/// Класс стеганографического алгоритма Коха-Жао
+	/// </summary>
 	public static class KochZhao
 	{
 		private const int RGBSum = 255 + 255 + 255;
-		private static int Offset = 25;
-		private static int SelectedSpectrum = 2;
-		private static Point P1 = new Point(3, 4);
-		private static Point P2 = new Point(4, 3);
 
-		public static void SetSettings(int offset, int specter, Point p1, Point p2)
-		{
-			Offset = offset;
-			SelectedSpectrum = specter;
-			if (p1.X >= 0 && p1.X <= 7 && p1.Y >= 0 && p1.Y <= 7)
-				P1 = p1;
-			if (p2.X >= 0 && p2.X <= 7 && p2.Y >= 0 && p2.Y <= 7)
-				P2 = p2;
-		}
-
-		public static (int, int, Point, Point) GetSettings() /// offest, specter, p1, p2
-		{
-			return (Offset, SelectedSpectrum, P1, P2);
-		}
-
-		private static BitArray ToBinaryString(Encoding encoding, string text)
+		/// <summary>
+		/// Преобразование текста в массив бит в указанной кодировке
+		/// </summary>
+		private static BitArray StringToBinary(Encoding encoding, string text)
 		{
 			string stream = string.Join("", encoding.GetBytes(text).Select(n => Convert.ToString(n, 2).PadLeft(8, '0')));
 			BitArray ba = new BitArray(stream.Length);
@@ -45,11 +31,17 @@ namespace TestCW
 			return ba;
 		}
 
-		private static string ToStringBinary(Encoding encoding, BitArray bitArray)
+		/// <summary>
+		/// Преобразование массива бит в текст в указанной кодировке
+		/// </summary>
+		private static string BinaryToString(Encoding encoding, BitArray bitArray)
 		{
 			return encoding.GetString(bitArray.BitArrayToByteArray());
 		}
 
+		/// <summary>
+		/// Пулучить дискретное косинусное пребразование
+		/// </summary>
 		public static double[,] GetDCT(double[,] temp_bm)
 		{
 			double[,] dct = new double[8, 8];
@@ -73,6 +65,9 @@ namespace TestCW
 			return dct;
 		}
 
+		/// <summary>
+		/// Получить обратное дискретное косинусное предобразование
+		/// </summary>
 		public static double[,] GetIDCT(double[,] dct)
 		{
 			double[,] arr = new double[8, 8];
@@ -88,7 +83,6 @@ namespace TestCW
 						for (int y = 0; y < 8; y++)
 						{
 							temp += dct[x, y] * KeysDCT.cos_t[x, i] * KeysDCT.cos_t[y, j] * KeysDCT.e[x, y];
-							//byte spect = temp > 255 ? (byte)255 : (byte)Math.Round(temp);
 							arr[i, j] = temp;
 						}
 					}
@@ -97,6 +91,9 @@ namespace TestCW
 			return arr;
 		}
 
+		/// <summary>
+		/// Нормализвация обратного дискретного косинусного предобразования
+		/// </summary>
 		private static byte[,] Normalization(double[,] idct)
 		{
 			double min = Double.MaxValue, max = Double.MinValue;
@@ -121,8 +118,15 @@ namespace TestCW
 			return result;
 		}
 
-		private static double[,] SetBitToSqrOctoplet(double[,] dct, bool bit)
+		/// <summary>
+		/// Установить бит в область дискретного косинусного преобразования с проверкой извлекаемости
+		/// </summary>
+		private static double[,] SetBitToSqrOctoplet(double[,] dct, bool bit, KochZhaoParameters parameters)
 		{
+			int offset = parameters.Offset;
+			Point p1 = parameters.P1;
+			Point p2 = parameters.P2;
+
 			double k;
 			double[,] buf_dct = dct.Copy();
 
@@ -132,38 +136,38 @@ namespace TestCW
 				bool encr_bit = false;
 				while (!encr_bit)
 				{
-					k = Math.Abs(buf_dct[P1.Y, P1.X]) - Math.Abs(buf_dct[P2.Y, P2.X]);
-					if (bit) // K1 - K2 > Offset    ->   1
+					k = Math.Abs(buf_dct[p1.Y, p1.X]) - Math.Abs(buf_dct[p2.Y, p2.X]);
+					if (bit)
 					{
-						if (k <= Offset)
+						if (k <= offset)
 						{
-							buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? 1 : -1;
-							buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? -1 : 1;
+							buf_dct[p1.Y, p1.X] += buf_dct[p1.Y, p1.X] >= 0 ? 1 : -1;
+							buf_dct[p2.Y, p2.X] += buf_dct[p2.Y, p2.X] >= 0 ? -1 : 1;
 						}
 						else
 							encr_bit = true;
 					}
-					else            // K1 - K2 < -Offset     ->   0
+					else
 					{
-						if (k >= -Offset)
+						if (k >= -offset)
 						{
-							buf_dct[P1.Y, P1.X] += buf_dct[P1.Y, P1.X] >= 0 ? -1 : 1;
-							buf_dct[P2.Y, P2.X] += buf_dct[P2.Y, P2.X] >= 0 ? 1 : -1;
+							buf_dct[p1.Y, p1.X] += buf_dct[p1.Y, p1.X] >= 0 ? -1 : 1;
+							buf_dct[p2.Y, p2.X] += buf_dct[p2.Y, p2.X] >= 0 ? 1 : -1;
 						}
 						else
 							encr_bit = true;
 					}
 				}
 				double[,] decr_dct = GetDCT(GetIDCT(buf_dct));
-				k = Math.Abs(decr_dct[P1.Y, P1.X]) - Math.Abs(decr_dct[P2.Y, P2.X]);
-				if (bit) // K1 - K2 > Offset    ->   1
+				k = Math.Abs(decr_dct[p1.Y, p1.X]) - Math.Abs(decr_dct[p2.Y, p2.X]);
+				if (bit)
 				{
 					if (k >= 0)
 						good_idct = true;
 					else
 						buf_dct = decr_dct;
 				}
-				else            // K1 - K2 < -Offset     ->   0
+				else
 				{
 					if (k < 0)
 						good_idct = true;
@@ -174,8 +178,15 @@ namespace TestCW
 			return buf_dct;
 		}
 
-		private static double[,] SetBitToSqrOctopletLight(double[,] dct, bool bit)
+		/// <summary>
+		/// Установить бит в область дискретного косинусного преобразования без проверки извлекаемости
+		/// </summary>
+		private static double[,] SetBitToSqrOctopletLight(double[,] dct, bool bit, KochZhaoParameters parameters)
 		{
+			int Offset = parameters.Offset;
+			Point P1 = parameters.P1;
+			Point P2 = parameters.P2;
+
 			double k;
 			double[,] buf_dct = dct.Copy();
 
@@ -207,7 +218,10 @@ namespace TestCW
 			return buf_dct;
 		}
 
-		private static void SetSpectrumMapOfImage(int selectedSpecter, ref Bitmap img, byte[,] normalized_specter_map)
+		/// <summary>
+		/// Установить спектр в изображение
+		/// </summary>
+		private static void SetSpectrumMapOfImage(Spectrum spectrum, ref Bitmap img, byte[,] normalized_specter_map)
         {
             for (int i = 0; i + 7 < img.Height; i += 8)
             {
@@ -219,11 +233,11 @@ namespace TestCW
                         {
                             Color old = img.GetPixel(x + j, y + i);
                             Color cl = new Color();
-                            if (selectedSpecter == 0)
+                            if (spectrum == Spectrum.Red)
                                 cl = Color.FromArgb(normalized_specter_map[x + j, y + i], old.G, old.B);
-                            else if (selectedSpecter == 1)
+                            else if (spectrum == Spectrum.Green)
                                 cl = Color.FromArgb(old.R, normalized_specter_map[x + j, y + i], old.B);
-                            else if (selectedSpecter == 2)
+                            else if (spectrum == Spectrum.Blue)
                                 cl = Color.FromArgb(old.R, old.G, normalized_specter_map[x + j, y + i]);
                             img.SetPixel(x + j, y + i, cl);
                         }
@@ -232,7 +246,10 @@ namespace TestCW
             }
         }
 
-        private static double[,] GetSpectrumMap(int selectedSpecter, ref Bitmap img)
+		/// <summary>
+		/// Получить спектр изображения
+		/// </summary>
+		private static double[,] GetSpectrumMap(Spectrum spectrum, ref Bitmap img)
         {
             double[,] specter_map = new double[img.Width, img.Height];
             for (int i = 0; i + 7 < img.Height; i += 8)
@@ -244,11 +261,11 @@ namespace TestCW
                         for (int x = 0; x < 8; x++)
                         {
                             Color cl = img.GetPixel(x + j, y + i);
-                            if (selectedSpecter == 0)
+                            if (spectrum == Spectrum.Red)
                                 specter_map[x + j, y + i] = cl.R;
-                            else if (selectedSpecter == 1)
+                            else if (spectrum == Spectrum.Green)
                                 specter_map[x + j, y + i] = cl.G;
-                            else if (selectedSpecter == 2)
+                            else if (spectrum == Spectrum.Blue)
                                 specter_map[x + j, y + i] = cl.B;
                         }
                     }
@@ -257,18 +274,23 @@ namespace TestCW
             return specter_map;
         }
 
-		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, int selectedSpectrum, IProgressChanged form = null)
+		/// <summary>
+		/// Закодировать сообщение в изображение
+		/// </summary>
+		public static Bitmap Encode(Bitmap toCloneImg, Encoding encoding, string text, KochZhaoParameters parameters, IProgressChanged form = null)
 		{
+			Spectrum spectrum = parameters.Spectrum;
+
 			if (form != null)
 				form.ChangeProgress(1);
 
 			Random rand = new Random();
-			BitArray textBits = ToBinaryString(encoding, text);
+			BitArray textBits = StringToBinary(encoding, text);
 			Bitmap img = (Bitmap)toCloneImg.Clone();
 			int l = 0;
 			int MaxEncodedBits = (img.Width / 8) * (img.Height / 8);
 
-			double[,] specter_map = GetSpectrumMap(selectedSpectrum, ref img);
+			double[,] spectrum_map = GetSpectrumMap(spectrum, ref img);
 
 			double[,] temp_bm = new double[8, 8];
 			for (int i = 0; i + 7 < img.Height; i += 8)
@@ -280,11 +302,11 @@ namespace TestCW
 						for (int x = 0; x < 8; x++)
 						{
 							Color cl = img.GetPixel(x + j, y + i);
-							if (selectedSpectrum == 0)
+							if (spectrum == Spectrum.Red)
 								temp_bm[x, y] = cl.R;
-							else if (selectedSpectrum == 1)
+							else if (spectrum == Spectrum.Green)
 								temp_bm[x, y] = cl.G;
-							else if (selectedSpectrum == 2)
+							else if (spectrum == Spectrum.Blue)
 								temp_bm[x, y] = cl.B;
 						}
 					}
@@ -295,12 +317,12 @@ namespace TestCW
 					if (l < textBits.Count)
                     {
 						bit = textBits[l];
-						dct = SetBitToSqrOctoplet(dct, bit);
+						dct = SetBitToSqrOctoplet(dct, bit, parameters);
 					}
 					else
                     {
 						bit = rand.Next(0, 2) == 1 ? true : false;
-						dct = SetBitToSqrOctopletLight(dct, bit);
+						dct = SetBitToSqrOctopletLight(dct, bit, parameters);
 					}
 						
 					temp_bm = GetIDCT(dct);
@@ -309,7 +331,7 @@ namespace TestCW
 					{
 						for (int x = 0; x < 8; x++)
 						{
-							specter_map[x + j, y + i] = temp_bm[x, y];
+							spectrum_map[x + j, y + i] = temp_bm[x, y];
 						}
 					}
 
@@ -319,17 +341,24 @@ namespace TestCW
 				}
 			}
 
-			byte[,] normalized_specter_map = Normalization(specter_map);
+			byte[,] normalized_specter_map = Normalization(spectrum_map);
 
-			SetSpectrumMapOfImage(selectedSpectrum, ref img, normalized_specter_map);
+			SetSpectrumMapOfImage(spectrum, ref img, normalized_specter_map);
 
 			if (form != null)
 				form.ChangeProgress(100);
 			return img;
 		}
 
-		public static string Decode(Bitmap toCloneImg, Encoding encoding, int key, IProgressChanged form = null)
+		/// <summary>
+		/// Декодировать сообщение из изображения
+		/// </summary>
+		public static string Decode(Bitmap toCloneImg, Encoding encoding, int key, KochZhaoParameters parameters, IProgressChanged form = null)
 		{
+			Spectrum spectrum = parameters.Spectrum;
+			Point p1 = parameters.P1;
+			Point p2 = parameters.P2;
+
 			if (form != null)
 				form.ChangeProgress(1);
 
@@ -355,18 +384,18 @@ namespace TestCW
 						for (int x = 0; x < 8; x++)
 						{
 							Color cl = img.GetPixel(x + j, y + i);
-							if (SelectedSpectrum == 0)
+							if (spectrum == Spectrum.Red)
 								temp_bm[x, y] = cl.R;
-							else if (SelectedSpectrum == 1)
+							else if (spectrum == Spectrum.Green)
 								temp_bm[x, y] = cl.G;
-							else if (SelectedSpectrum == 2)
+							else if (spectrum == Spectrum.Blue)
 								temp_bm[x, y] = cl.B;
 						}
 					}
 
 					double[,] dct = GetDCT(temp_bm);
 
-					if (Math.Abs(dct[P1.Y, P1.X]) > Math.Abs(dct[P2.Y, P2.X]))
+					if (Math.Abs(dct[p1.Y, p1.X]) > Math.Abs(dct[p2.Y, p2.X]))
 					{
 						textBits.Add(true);
 						l++;
@@ -385,13 +414,16 @@ namespace TestCW
 					form.ChangeProgress((int)(((double)l + 20) / (double)(bitCount + 20) * 100));
 			}
 
-			string text = ToStringBinary(encoding, new BitArray(textBits.ToArray()));
+			string text = BinaryToString(encoding, new BitArray(textBits.ToArray()));
 
 			if (form != null)
 				form.ChangeProgress(100);
 			return text;
 		}
 
+		/// <summary>
+		/// Обнаружить и отобразить на изображении неверно декодированные биты. Результатом явлется количество неверных битов и изображение с их обозначением
+		/// </summary>
 		public static (int, Bitmap) DetectInvalideSqrOctopixels(Bitmap toCloneImg, Encoding encoding, string encodeText, string decodeText, int key, IProgressChanged form = null)
 		{
 			if (form != null)
@@ -404,8 +436,8 @@ namespace TestCW
 			int badEncoded = 0;
 			int bitCount = key * 8;
 
-			BitArray encodeTextBits = ToBinaryString(encoding, encodeText);
-			BitArray decodeTextBits = ToBinaryString(encoding, decodeText);
+			BitArray encodeTextBits = StringToBinary(encoding, encodeText);
+			BitArray decodeTextBits = StringToBinary(encoding, decodeText);
 
 			if (encodeTextBits.Count != decodeTextBits.Count)
 				throw new Exception("Different messages length!");
@@ -482,6 +514,5 @@ namespace TestCW
 				form.ChangeProgress(100);
 			return (badEncoded, img);
 		}
-
 	}
 }

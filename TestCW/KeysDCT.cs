@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace TestCW
 {
-    class KeysDCT
+    /// <summary>
+    /// Рассчитаные значения для дискретного косинусного преобразования
+    /// </summary>
+    static class KeysDCT
     {
         public static double[,] cos_t = { {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
                             {0.9807853, 0.8314696, 0.5555702, 0.1950903, -0.1950903,-0.5555702,-0.8314696,-0.9807853},
