@@ -20,7 +20,7 @@ namespace TestCW
 		private Point P1 = new Point(3, 4);
 		private Point P2 = new Point(4, 3);
 		private bool UILocked = false;
-
+		
 		public Main()
 		{
 			InitializeComponent();
@@ -34,7 +34,7 @@ namespace TestCW
 			Image_PictureBox.BackgroundImageLayout = ImageLayout.Stretch;
 			EncodedImage_PictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 			AnalysedImage_PictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-
+			
 			UpdateButtonsState();
 		}
 

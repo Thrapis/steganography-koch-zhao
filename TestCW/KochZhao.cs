@@ -42,7 +42,7 @@ namespace TestCW
 		/// <summary>
 		/// Пулучить дискретное косинусное пребразование
 		/// </summary>
-		public static double[,] GetDCT(double[,] temp_bm)
+		private static double[,] GetDCT(double[,] temp_bm)
 		{
 			double[,] dct = new double[8, 8];
 
@@ -68,7 +68,7 @@ namespace TestCW
 		/// <summary>
 		/// Получить обратное дискретное косинусное предобразование
 		/// </summary>
-		public static double[,] GetIDCT(double[,] dct)
+		private static double[,] GetIDCT(double[,] dct)
 		{
 			double[,] arr = new double[8, 8];
 
