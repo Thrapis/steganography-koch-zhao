@@ -45,7 +45,7 @@ namespace TestCW
 		{
 			Bitmap img;
 
-			double coef = (double)byteToEncode / (double)ImageMaxBytes;
+			double coef = Math.Sqrt((double)byteToEncode / (double)ImageMaxBytes);
 			int newWidth = (int)((double)OpenedImage.Width * coef);
 			int newHeight = (int)((double)OpenedImage.Height * coef);
 

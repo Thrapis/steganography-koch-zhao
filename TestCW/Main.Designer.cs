@@ -277,9 +277,9 @@ namespace TestCW
             this.Resize_CheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.Resize_CheckBox.Location = new System.Drawing.Point(10, 447);
             this.Resize_CheckBox.Name = "Resize_CheckBox";
-            this.Resize_CheckBox.Size = new System.Drawing.Size(150, 24);
+            this.Resize_CheckBox.Size = new System.Drawing.Size(140, 24);
             this.Resize_CheckBox.TabIndex = 23;
-            this.Resize_CheckBox.Text = "Resize For Text";
+            this.Resize_CheckBox.Text = "Resize for text";
             this.Resize_CheckBox.UseVisualStyleBackColor = true;
             // 
             // label5
@@ -302,7 +302,7 @@ namespace TestCW
             this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1325, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1325, 30);
             this.menuStrip1.TabIndex = 25;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -349,8 +349,8 @@ namespace TestCW
             // saveAnalisedImageToolStripMenuItem
             // 
             this.saveAnalisedImageToolStripMenuItem.Name = "saveAnalisedImageToolStripMenuItem";
-            this.saveAnalisedImageToolStripMenuItem.Size = new System.Drawing.Size(232, 26);
-            this.saveAnalisedImageToolStripMenuItem.Text = "Save analyzed image";
+            this.saveAnalisedImageToolStripMenuItem.Size = new System.Drawing.Size(231, 26);
+            this.saveAnalisedImageToolStripMenuItem.Text = "Save analysed image";
             this.saveAnalisedImageToolStripMenuItem.Click += new System.EventHandler(this.SaveAnalysedImage_MenuItem_Click);
             // 
             // actionsToolStripMenuItem
@@ -503,7 +503,7 @@ namespace TestCW
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1325, 770);
+            this.ClientSize = new System.Drawing.Size(1325, 769);
             this.Controls.Add(this.ProgressBarText);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
@@ -536,6 +536,7 @@ namespace TestCW
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Koch&Zhao";

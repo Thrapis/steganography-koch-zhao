@@ -105,7 +105,7 @@ namespace TestCW
             this.textBox1.Size = new System.Drawing.Size(333, 82);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
-            this.textBox1.Text = "Application for text steganography, based on discrete cosine transform";
+            this.textBox1.Text = "Application for image steganography, based on discrete cosine transform";
             // 
             // AboutWindow
             // 
