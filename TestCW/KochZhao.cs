@@ -56,10 +56,14 @@ namespace TestCW
 					{
 						for (int y = 0; y < 8; y++)
 						{
-							temp += KeysDCT.cos_t[i, x] * KeysDCT.cos_t[j, y] * (double)temp_bm[x, y];
+							// Используя уже просчитанные значения косинуса, суммируем temp
+							//temp = ∑_(x=0)^(N-1) ∑_(y=0)^(N-1) [C(x,y)]⋅cos⁡((π⋅v(2x+1))/2N)⋅cos⁡((π⋅u(2y+1))/2N)
+							temp += KeysDCT.Сos_t[i, x] * KeysDCT.Сos_t[j, y] * (double)temp_bm[x, y];
 						}
 					}
-					dct[i, j] = KeysDCT.e[i, j] * temp;
+					// Перемножаем на просчитанную величину E
+					// ξ(u)⋅ξ(v))/√2N ⋅ temp
+					dct[i, j] = KeysDCT.E[i, j] * temp;
 				}
 			}
 			return dct;
@@ -82,7 +86,9 @@ namespace TestCW
 					{
 						for (int y = 0; y < 8; y++)
 						{
-							temp += dct[x, y] * KeysDCT.cos_t[x, i] * KeysDCT.cos_t[y, j] * KeysDCT.e[x, y];
+							// Восстанавливаем изображение, также используя просчитанные значения и ДКП
+							// 1/√2N⋅∑_(x=0)^(N-1) ∑_(y=0)^(N-1) ξ(u)ξ(v) ⋅Ω(u,v)⋅cos⁡((π⋅v(2x+1))/2N)⋅cos⁡((π⋅u(2y+1))/2N)
+							temp += dct[x, y] * KeysDCT.Сos_t[x, i] * KeysDCT.Сos_t[y, j] * KeysDCT.E[x, y];
 							arr[i, j] = temp;
 						}
 					}
@@ -92,7 +98,7 @@ namespace TestCW
 		}
 
 		/// <summary>
-		/// Нормализвация обратного дискретного косинусного предобразования
+		/// Нормализация обратного дискретного косинусного предобразования
 		/// </summary>
 		private static byte[,] Normalization(double[,] idct)
 		{
@@ -137,7 +143,12 @@ namespace TestCW
 				while (!encr_bit)
 				{
 					k = Math.Abs(buf_dct[p1.Y, p1.X]) - Math.Abs(buf_dct[p2.Y, p2.X]);
-					if (bit)
+
+					// В зависимости от значения бита, мы должны установить разность в определенное значение P(-P), оно же Offset(-Offset)
+					// |Ω_b (u_1,v_1)|-|Ω_b (u_2,v_2)| >  P, при m_b == 0
+					// |Ω_b (u_1,v_1)|-|Ω_b (u_2,v_2)| < -P, при m_b == 1
+
+					if (bit)        // K1 - K2 > Offset    ->   1
 					{
 						if (k <= offset)
 						{
@@ -147,7 +158,7 @@ namespace TestCW
 						else
 							encr_bit = true;
 					}
-					else
+					else           // K1 - K2 < -Offset     ->   0
 					{
 						if (k >= -offset)
 						{
@@ -160,14 +171,14 @@ namespace TestCW
 				}
 				double[,] decr_dct = GetDCT(GetIDCT(buf_dct));
 				k = Math.Abs(decr_dct[p1.Y, p1.X]) - Math.Abs(decr_dct[p2.Y, p2.X]);
-				if (bit)
+				if (bit)        // K1 - K2 > Offset    ->   1
 				{
 					if (k >= 0)
 						good_idct = true;
 					else
 						buf_dct = decr_dct;
 				}
-				else
+				else           // K1 - K2 < -Offset     ->   0
 				{
 					if (k < 0)
 						good_idct = true;
@@ -194,7 +205,12 @@ namespace TestCW
 			while (!encr_bit)
 			{
 				k = Math.Abs(buf_dct[P1.Y, P1.X]) - Math.Abs(buf_dct[P2.Y, P2.X]);
-				if (bit) // K1 - K2 > Offset    ->   1
+
+				// В зависимости от значения бита, мы должны установить разность в определенное значение P(-P), оно же Offset(-Offset)
+				// |Ω_b (u_1,v_1)|-|Ω_b (u_2,v_2)| >  P, при m_b == 0
+				// |Ω_b (u_1,v_1)|-|Ω_b (u_2,v_2)| < -P, при m_b == 1
+
+				if (bit)		// K1 - K2 > Offset    ->   1
 				{
 					if (k <= Offset)
 					{

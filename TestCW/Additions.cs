@@ -33,7 +33,7 @@ namespace TestCW
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Console.Write(Math.Round(arr[i, j], 2) + "\t");
+                    Console.Write(Math.Round(arr[i, j], 8) + "\t");
                 }
                 Console.WriteLine();
             }

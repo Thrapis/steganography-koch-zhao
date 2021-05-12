@@ -33,7 +33,7 @@ namespace TestCW
 			Image_PictureBox.BackgroundImageLayout = ImageLayout.Stretch;
 			EncodedImage_PictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 			AnalysedImage_PictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-			
+
 			UpdateButtonsState();
 		}
 
